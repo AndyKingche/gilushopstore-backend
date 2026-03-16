@@ -1,6 +1,7 @@
 package com.izenshy.gessainvoice.modules.product.stock.service.impl;
 
 import com.izenshy.gessainvoice.modules.product.stock.dto.ListStockDeluxeDTO;
+import com.izenshy.gessainvoice.modules.product.stock.dto.OnlineStoreProductDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockDeluxeDTO;
 import com.izenshy.gessainvoice.modules.product.stock.mapper.StockMapper;
@@ -305,5 +306,27 @@ public class StockServiceImpl implements StockService {
 
             stockRepository.save(stock);
         }
+    }
+
+    @Override
+    public List<OnlineStoreProductDTO> getOnlineStoreProducts(Long outletId, int pageSize, int offset) {
+        List<Object[]> results = stockRepository.findOnlineStoreProductsByOutletId(outletId, pageSize, offset);
+        return results.stream()
+                .map(row -> new OnlineStoreProductDTO(
+                        (String) row[0],  // id
+                        (String) row[1],  // name
+                        (String) row[2],  // category
+                        (String) row[3],  // brand
+                        ((Number) row[4]).doubleValue(),  // price
+                        (String) row[5],  // description
+                        (String) row[6],  // image
+                        (Boolean) row[7]  // inStock
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long getOnlineStoreProductsCount(Long outletId) {
+        return stockRepository.countOnlineStoreProductsByOutletId(outletId);
     }
 }

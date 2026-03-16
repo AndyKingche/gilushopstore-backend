@@ -4,6 +4,7 @@ import com.izenshy.gessainvoice.modules.person.user.model.UserModel;
 import com.izenshy.gessainvoice.modules.person.user.service.UserService;
 import com.izenshy.gessainvoice.security.jwt.JwtRequest;
 import com.izenshy.gessainvoice.security.jwt.JwtResponse;
+import com.izenshy.gessainvoice.security.jwt.JwtResponseOnlineShop;
 import com.izenshy.gessainvoice.security.jwt.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,22 @@ public class JwtAuthenticationController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             return ResponseEntity.ok(new JwtResponse(token, user.getUserRol(), user.getEnterpriseId().getId(), user.getUserFirstname() + " "+ user.getUserLastname(), user.getUserGender(), user.getId()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/api/login")
+    public ResponseEntity<?> createAuthenticationTokenShop(@RequestBody JwtRequest authenticationRequest) throws Exception {
+        try {
+            authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+            final String token = jwtTokenProvider.generateToken(userDetails);
+            final UserModel user = userService.getUserByUserName(authenticationRequest.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            return ResponseEntity.ok(new JwtResponseOnlineShop(token, user.getUserFirstname() + " "+ user.getUserLastname()));
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

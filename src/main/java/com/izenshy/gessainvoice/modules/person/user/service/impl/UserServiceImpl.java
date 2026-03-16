@@ -47,6 +47,10 @@ public class UserServiceImpl implements UserService {
         if (newUser == null) {
             throw new IllegalArgumentException("UserDTO cannot be null");
         }
+        if (newUser.getEnterpriseId() == null) {
+            throw new IllegalArgumentException("Enterprise ID cannot be null");
+        }
+
         Optional<UserModel> existingUser = userRepository.findByUserRucAndUserStatusTrue(newUser.getUserRuc());
         if (existingUser.isPresent()) {
             throw new IllegalArgumentException("El RUC ya está registrado: " + newUser.getUserRuc());

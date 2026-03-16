@@ -5,6 +5,7 @@ import com.izenshy.gessainvoice.modules.enterprises.certificate.model.OutletMode
 import com.izenshy.gessainvoice.modules.product.product.model.ProductModel;
 import com.izenshy.gessainvoice.modules.product.product.model.TaxModel;
 import com.izenshy.gessainvoice.modules.product.stock.dto.ListStockDeluxeDTO;
+import com.izenshy.gessainvoice.modules.product.stock.dto.OnlineStoreProductDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockDeluxeDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockResponseDTO;
@@ -163,6 +164,23 @@ public class StockController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // Obtener productos para tienda online
+    @GetMapping("/online-store/{outletId}")
+    public ResponseEntity<List<OnlineStoreProductDTO>> getOnlineStoreProducts(
+            @PathVariable Long outletId,
+            @RequestParam(defaultValue = "4") int pageSize,
+            @RequestParam(defaultValue = "0") int offset) {
+        List<OnlineStoreProductDTO> products = stockService.getOnlineStoreProducts(outletId, pageSize, offset);
+        return ResponseEntity.ok(products);
+    }
+
+    // Contar productos para tienda online
+    @GetMapping("/online-store/{outletId}/count")
+    public ResponseEntity<Long> getOnlineStoreProductsCount(@PathVariable Long outletId) {
+        Long count = stockService.getOnlineStoreProductsCount(outletId);
+        return ResponseEntity.ok(count);
     }
 
     // Obtener stock deluxe por producto y outlet

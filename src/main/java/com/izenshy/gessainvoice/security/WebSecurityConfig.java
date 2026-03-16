@@ -41,6 +41,11 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/authenticate",
+                                "/api/login",
+                                "/api/v1/gessa/stock/online-store/{outletId}",
+                                "/api/v1/gessa/stock/online-store/{outletId}/count",
+                                "/api/v1/gessa/category/all",
+                                "/api/v1/gessa/user/create-user",
                                 "/gessa-invoice/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml",

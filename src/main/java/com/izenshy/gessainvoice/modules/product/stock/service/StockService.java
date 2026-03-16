@@ -1,6 +1,7 @@
 package com.izenshy.gessainvoice.modules.product.stock.service;
 
 import com.izenshy.gessainvoice.modules.product.stock.dto.ListStockDeluxeDTO;
+import com.izenshy.gessainvoice.modules.product.stock.dto.OnlineStoreProductDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockDTO;
 import com.izenshy.gessainvoice.modules.product.stock.dto.StockDeluxeDTO;
 import com.izenshy.gessainvoice.modules.product.stock.model.StockModel;
@@ -27,5 +28,7 @@ public interface StockService {
     ListStockDeluxeDTO getAllDeluxeOuletId(Long outletId);
     ListStockDeluxeDTO searchDeluxe(String query, Long outletId);
     void uploadStockList(List<StockDeluxeDTO> stockList, Long outletId);
+    List<OnlineStoreProductDTO> getOnlineStoreProducts(Long outletId, int pageSize, int offset);
+    Long getOnlineStoreProductsCount(Long outletId);
 
 }
