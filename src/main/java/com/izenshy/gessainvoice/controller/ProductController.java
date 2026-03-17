@@ -7,6 +7,8 @@ import com.izenshy.gessainvoice.modules.product.product.dto.ProductDeluxeDTO;
 import com.izenshy.gessainvoice.modules.product.product.model.CategoryModel;
 import com.izenshy.gessainvoice.modules.product.product.service.ProductService;
 import com.izenshy.gessainvoice.modules.product.product.service.impl.CategoryServiceImpl;
+import com.izenshy.gessainvoice.modules.product.stock.dto.OnlineStoreProductDTO;
+import com.izenshy.gessainvoice.modules.product.stock.service.StockService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +16,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/gessa/product")
 @Tag(name = "Product", description = "Esta sección es dedicada a las operaciones relacionadas con los Productos")
 @CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class ProductController {
     private final ProductService productService;
+    private final StockService stockService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, StockService stockService) {
         this.productService = productService;
+        this.stockService = stockService;
     }
 
     // Listar todos los productos (básico)
@@ -75,6 +81,24 @@ public class ProductController {
     @PutMapping("/update-deluxe/{id}")
     public ResponseEntity<ProductDeluxeDTO> updateDeluxe(@PathVariable Long id, @RequestBody ProductDeluxeDTO productDeluxeDTO) {
         return ResponseEntity.ok(productService.updateProductDeluxe(id, productDeluxeDTO));
+    }
+
+    // Obtener productos de tienda online por nombre
+    @GetMapping("/online-store/{outletId}/search")
+    public ResponseEntity<List<OnlineStoreProductDTO>> getOnlineStoreProductsByName(
+            @PathVariable Long outletId,
+            @RequestParam String name,
+            @RequestParam(defaultValue = "4") int pageSize,
+            @RequestParam(defaultValue = "0") int offset) {
+        List<OnlineStoreProductDTO> products = stockService.getOnlineStoreProductsByName(outletId, name, pageSize, offset);
+        return ResponseEntity.ok(products);
+    }
+
+    // Contar productos de tienda online por nombre
+    @GetMapping("/online-store/{outletId}/search/count")
+    public ResponseEntity<Long> getOnlineStoreProductsByNameCount(@PathVariable Long outletId, @RequestParam String name) {
+        Long count = stockService.getOnlineStoreProductsByNameCount(outletId, name);
+        return ResponseEntity.ok(count);
     }
 
 }

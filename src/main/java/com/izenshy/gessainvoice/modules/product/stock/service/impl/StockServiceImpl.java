@@ -329,4 +329,70 @@ public class StockServiceImpl implements StockService {
     public Long getOnlineStoreProductsCount(Long outletId) {
         return stockRepository.countOnlineStoreProductsByOutletId(outletId);
     }
+
+    @Override
+    public List<OnlineStoreProductDTO> getOnlineStoreProductsByCategory(Long outletId, Long categoryId, int pageSize, int offset) {
+        List<Object[]> results = stockRepository.findOnlineStoreProductsByOutletIdAndCategoryId(outletId, categoryId, pageSize, offset);
+        return results.stream()
+                .map(row -> new OnlineStoreProductDTO(
+                        (String) row[0],  // id
+                        (String) row[1],  // name
+                        (String) row[2],  // category
+                        (String) row[3],  // brand
+                        ((Number) row[4]).doubleValue(),  // price
+                        (String) row[5],  // description
+                        (String) row[6],  // image
+                        (Boolean) row[7]  // inStock
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long getOnlineStoreProductsByCategoryCount(Long outletId, Long categoryId) {
+        return stockRepository.countOnlineStoreProductsByOutletIdAndCategoryId(outletId, categoryId);
+    }
+
+    @Override
+    public List<OnlineStoreProductDTO> getOnlineStoreProductsByName(Long outletId, String name, int pageSize, int offset) {
+        List<Object[]> results = stockRepository.findOnlineStoreProductsByOutletIdAndName(outletId, name, pageSize, offset);
+        return results.stream()
+                .map(row -> new OnlineStoreProductDTO(
+                        (String) row[0],  // id
+                        (String) row[1],  // name
+                        (String) row[2],  // category
+                        (String) row[3],  // brand
+                        ((Number) row[4]).doubleValue(),  // price
+                        (String) row[5],  // description
+                        (String) row[6],  // image
+                        (Boolean) row[7]  // inStock
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long getOnlineStoreProductsByNameCount(Long outletId, String name) {
+        return stockRepository.countOnlineStoreProductsByOutletIdAndName(outletId, name);
+    }
+
+    @Override
+    public List<OnlineStoreProductDTO> getOnlineStoreProductsByBrand(Long outletId, Long brandId, int pageSize, int offset) {
+        List<Object[]> results = stockRepository.findOnlineStoreProductsByOutletIdAndBrandId(outletId, brandId, pageSize, offset);
+        return results.stream()
+                .map(row -> new OnlineStoreProductDTO(
+                        (String) row[0],  // id
+                        (String) row[1],  // name
+                        (String) row[2],  // category
+                        (String) row[3],  // brand
+                        ((Number) row[4]).doubleValue(),  // price
+                        (String) row[5],  // description
+                        (String) row[6],  // image
+                        (Boolean) row[7]  // inStock
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long getOnlineStoreProductsByBrandCount(Long outletId, Long brandId) {
+        return stockRepository.countOnlineStoreProductsByOutletIdAndBrandId(outletId, brandId);
+    }
 }

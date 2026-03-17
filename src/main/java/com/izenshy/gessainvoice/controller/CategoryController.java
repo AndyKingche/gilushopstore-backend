@@ -2,6 +2,8 @@ package com.izenshy.gessainvoice.controller;
 
 import com.izenshy.gessainvoice.modules.product.product.model.CategoryModel;
 import com.izenshy.gessainvoice.modules.product.product.service.CategoryService;
+import com.izenshy.gessainvoice.modules.product.stock.dto.OnlineStoreProductDTO;
+import com.izenshy.gessainvoice.modules.product.stock.service.StockService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import java.util.List;
 @CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class CategoryController {
     private final CategoryService categoryService;
+    private final StockService stockService;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, StockService stockService) {
         this.categoryService = categoryService;
+        this.stockService = stockService;
     }
 
     // Obtener todas las categorías
@@ -62,5 +66,23 @@ public class CategoryController {
     @GetMapping("/exists")
     public ResponseEntity<Boolean> existsByName(@RequestParam String name) {
         return ResponseEntity.ok(categoryService.existsByName(name));
+    }
+
+    // Obtener productos de tienda online por categoría
+    @GetMapping("/online-store/{outletId}/category/{categoryId}")
+    public ResponseEntity<List<OnlineStoreProductDTO>> getOnlineStoreProductsByCategory(
+            @PathVariable Long outletId,
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "4") int pageSize,
+            @RequestParam(defaultValue = "0") int offset) {
+        List<OnlineStoreProductDTO> products = stockService.getOnlineStoreProductsByCategory(outletId, categoryId, pageSize, offset);
+        return ResponseEntity.ok(products);
+    }
+
+    // Contar productos de tienda online por categoría
+    @GetMapping("/online-store/{outletId}/category/{categoryId}/count")
+    public ResponseEntity<Long> getOnlineStoreProductsByCategoryCount(@PathVariable Long outletId, @PathVariable Long categoryId) {
+        Long count = stockService.getOnlineStoreProductsByCategoryCount(outletId, categoryId);
+        return ResponseEntity.ok(count);
     }
 }

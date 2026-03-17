@@ -30,5 +30,11 @@ public interface StockService {
     void uploadStockList(List<StockDeluxeDTO> stockList, Long outletId);
     List<OnlineStoreProductDTO> getOnlineStoreProducts(Long outletId, int pageSize, int offset);
     Long getOnlineStoreProductsCount(Long outletId);
+    List<OnlineStoreProductDTO> getOnlineStoreProductsByCategory(Long outletId, Long categoryId, int pageSize, int offset);
+    Long getOnlineStoreProductsByCategoryCount(Long outletId, Long categoryId);
+    List<OnlineStoreProductDTO> getOnlineStoreProductsByName(Long outletId, String name, int pageSize, int offset);
+    Long getOnlineStoreProductsByNameCount(Long outletId, String name);
+    List<OnlineStoreProductDTO> getOnlineStoreProductsByBrand(Long outletId, Long brandId, int pageSize, int offset);
+    Long getOnlineStoreProductsByBrandCount(Long outletId, Long brandId);
 
 }
