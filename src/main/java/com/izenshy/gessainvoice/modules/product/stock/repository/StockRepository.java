@@ -30,7 +30,7 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "s.pvp_price AS price, " +
             "p.product_description AS description, " +
             "img.image_url AS image, " +
-            "COALESCE(s.stock_avalible, false) AS inStock " +
+            "CASE WHEN s.stock_quantity > 0 AND s.stock_avalible THEN true ELSE false END AS inStock " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
             "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
@@ -38,6 +38,10 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "LEFT JOIN public.catalog_brand cb ON cb.brand_id = cbp.brand_id " +
             "LEFT JOIN public.image_stock img ON img.stock_product_id = s.stock_product_id AND img.stock_outlet_id = s.stock_outlet_id AND img.is_primary = true " +
             "WHERE s.stock_outlet_id = :outletId " +
+            "AND s.stock_avalible = true " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION' " +
             "ORDER BY p.product_name ASC " +
             "LIMIT :pageSize OFFSET :offset", nativeQuery = true)
     List<Object[]> findOnlineStoreProductsByOutletId(@Param("outletId") Long outletId, @Param("pageSize") int pageSize, @Param("offset") int offset);
@@ -45,7 +49,12 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
     @Query(value = "SELECT COUNT(*) " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
-            "WHERE s.stock_outlet_id = :outletId AND s.stock_avalible = true", nativeQuery = true)
+            "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
+            "WHERE s.stock_outlet_id = :outletId " +
+            "AND s.stock_avalible = true " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION'", nativeQuery = true)
     Long countOnlineStoreProductsByOutletId(@Param("outletId") Long outletId);
 
     @Query(value = "SELECT " +
@@ -56,7 +65,7 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "s.pvp_price AS price, " +
             "p.product_description AS description, " +
             "img.image_url AS image, " +
-            "COALESCE(s.stock_avalible, false) AS inStock " +
+            "CASE WHEN s.stock_quantity > 0 AND s.stock_avalible THEN true ELSE false END AS inStock " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
             "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
@@ -64,6 +73,10 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "LEFT JOIN public.catalog_brand cb ON cb.brand_id = cbp.brand_id " +
             "LEFT JOIN public.image_stock img ON img.stock_product_id = s.stock_product_id AND img.stock_outlet_id = s.stock_outlet_id AND img.is_primary = true " +
             "WHERE s.stock_outlet_id = :outletId AND c.category_id = :categoryId " +
+            "AND s.stock_avalible = true " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION' " +
             "ORDER BY p.product_name ASC " +
             "LIMIT :pageSize OFFSET :offset", nativeQuery = true)
     List<Object[]> findOnlineStoreProductsByOutletIdAndCategoryId(@Param("outletId") Long outletId, @Param("categoryId") Long categoryId, @Param("pageSize") int pageSize, @Param("offset") int offset);
@@ -72,7 +85,12 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
             "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
-            "WHERE s.stock_outlet_id = :outletId AND s.stock_avalible = true AND c.category_id = :categoryId", nativeQuery = true)
+            "WHERE s.stock_outlet_id = :outletId " +
+            "AND s.stock_avalible = true " +
+            "AND c.category_id = :categoryId " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION'", nativeQuery = true)
     Long countOnlineStoreProductsByOutletIdAndCategoryId(@Param("outletId") Long outletId, @Param("categoryId") Long categoryId);
 
     @Query(value = "SELECT " +
@@ -83,14 +101,19 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "s.pvp_price AS price, " +
             "p.product_description AS description, " +
             "img.image_url AS image, " +
-            "COALESCE(s.stock_avalible, false) AS inStock " +
+            "CASE WHEN s.stock_quantity > 0 AND s.stock_avalible THEN true ELSE false END AS inStock " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
             "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
             "LEFT JOIN public.catalog_brand_product cbp ON cbp.product_id = p.product_id " +
             "LEFT JOIN public.catalog_brand cb ON cb.brand_id = cbp.brand_id " +
             "LEFT JOIN public.image_stock img ON img.stock_product_id = s.stock_product_id AND img.stock_outlet_id = s.stock_outlet_id AND img.is_primary = true " +
-            "WHERE s.stock_outlet_id = :outletId AND LOWER(p.product_name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+            "WHERE s.stock_outlet_id = :outletId " +
+            "AND LOWER(p.product_name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+            "AND s.stock_avalible = true " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION' " +
             "ORDER BY p.product_name ASC " +
             "LIMIT :pageSize OFFSET :offset", nativeQuery = true)
     List<Object[]> findOnlineStoreProductsByOutletIdAndName(@Param("outletId") Long outletId, @Param("name") String name, @Param("pageSize") int pageSize, @Param("offset") int offset);
@@ -98,7 +121,13 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
     @Query(value = "SELECT COUNT(*) " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
-            "WHERE s.stock_outlet_id = :outletId AND s.stock_avalible = true AND LOWER(p.product_name) LIKE LOWER(CONCAT('%', :name, '%'))", nativeQuery = true)
+            "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
+            "WHERE s.stock_outlet_id = :outletId " +
+            "AND LOWER(p.product_name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+            "AND s.stock_avalible = true " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION'", nativeQuery = true)
     Long countOnlineStoreProductsByOutletIdAndName(@Param("outletId") Long outletId, @Param("name") String name);
 
     @Query(value = "SELECT " +
@@ -109,7 +138,7 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "s.pvp_price AS price, " +
             "p.product_description AS description, " +
             "img.image_url AS image, " +
-            "COALESCE(s.stock_avalible, false) AS inStock " +
+            "CASE WHEN s.stock_quantity > 0 AND s.stock_avalible THEN true ELSE false END AS inStock " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
             "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
@@ -117,6 +146,10 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
             "LEFT JOIN public.catalog_brand cb ON cb.brand_id = cbp.brand_id " +
             "LEFT JOIN public.image_stock img ON img.stock_product_id = s.stock_product_id AND img.stock_outlet_id = s.stock_outlet_id AND img.is_primary = true " +
             "WHERE s.stock_outlet_id = :outletId AND cb.brand_id = :brandId " +
+            "AND s.stock_avalible = true " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION' " +
             "ORDER BY p.product_name ASC " +
             "LIMIT :pageSize OFFSET :offset", nativeQuery = true)
     List<Object[]> findOnlineStoreProductsByOutletIdAndBrandId(@Param("outletId") Long outletId, @Param("brandId") Long brandId, @Param("pageSize") int pageSize, @Param("offset") int offset);
@@ -124,9 +157,15 @@ public interface StockRepository extends JpaRepository<StockModel, Long> {
     @Query(value = "SELECT COUNT(*) " +
             "FROM public.stock s " +
             "INNER JOIN public.products p ON p.product_id = s.stock_product_id " +
+            "LEFT JOIN public.categories c ON p.category_id = c.category_id " +
             "LEFT JOIN public.catalog_brand_product cbp ON cbp.product_id = p.product_id " +
             "LEFT JOIN public.catalog_brand cb ON cb.brand_id = cbp.brand_id " +
-            "WHERE s.stock_outlet_id = :outletId AND s.stock_avalible = true AND cb.brand_id = :brandId", nativeQuery = true)
+            "WHERE s.stock_outlet_id = :outletId " +
+            "AND s.stock_avalible = true " +
+            "AND cb.brand_id = :brandId " +
+            "AND UPPER(c.category_name) != 'ROPA' " +
+            "AND UPPER(p.product_name) != 'CAMISETA NEON' " +
+            "AND UPPER(c.category_name) != 'SIN DEFINICION'", nativeQuery = true)
     Long countOnlineStoreProductsByOutletIdAndBrandId(@Param("outletId") Long outletId, @Param("brandId") Long brandId);
 
 }
