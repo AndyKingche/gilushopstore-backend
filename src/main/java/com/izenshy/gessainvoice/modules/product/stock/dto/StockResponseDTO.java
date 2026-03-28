@@ -7,10 +7,10 @@ public class StockResponseDTO {
     private Long productId;
     private Long outletId;
     private String nameProduct;
-    private float stockQuantity;
+    private double stockQuantity;
     private Boolean stockAvalible;
-    private float unitPrice;
-    private float pvpPrice;
+    private double unitPrice;
+    private double pvpPrice;
     private int stockMax;
     private int stockMin;
     private Boolean applyTax;

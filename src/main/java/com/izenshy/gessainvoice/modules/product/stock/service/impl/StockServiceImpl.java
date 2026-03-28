@@ -213,29 +213,51 @@ public class StockServiceImpl implements StockService {
             // Check or create category
             CategoryModel category = null;
             if (stockDTO.getCategoryName() != null && !stockDTO.getCategoryName().isEmpty()) {
-                category = categoryRepository.findByCategoryNameIgnoreCase(stockDTO.getCategoryName())
+                String categoryName = stockDTO.getCategoryName().trim().toUpperCase();
+                category = categoryRepository.findByCategoryNameIgnoreCase(categoryName)
                         .orElseGet(() -> {
-                            CategoryModel newCategory = new CategoryModel();
-                            newCategory.setCategoryName(stockDTO.getCategoryName());
-                            return categoryRepository.save(newCategory);
+                            try{
+
+                                CategoryModel newCategory = new CategoryModel();
+                                newCategory.setCategoryName(categoryName);
+                                newCategory.setCategoryDesc(categoryName);
+                                return categoryRepository.save(newCategory);
+                            }catch(Exception e){
+                                CategoryModel newCategory = new CategoryModel();
+                                newCategory.setCategoryName(categoryName);
+                                newCategory.setCategoryDesc(categoryName);
+                                return categoryRepository.save(newCategory);
+                            }
                         });
             }
 
             // Check or create detail
             DetailModel detail = null;
             if (stockDTO.getDetailName() != null && !stockDTO.getDetailName().isEmpty()) {
-                detail = detailRepository.findByDetailNameIgnoreCase(stockDTO.getDetailName())
+                String detailName = stockDTO.getDetailName().trim().toUpperCase();
+                detail = detailRepository.findByDetailNameIgnoreCase(detailName)
                         .orElseGet(() -> {
-                            DetailModel newDetail = new DetailModel();
-                            newDetail.setDetailName(stockDTO.getDetailName());
+                            try {
+                                
+                                DetailModel newDetail = new DetailModel();
+                                newDetail.setDetailName(detailName);
+                                newDetail.setDetailDesc(detailName);
+                                return detailRepository.save(newDetail);
+                            } catch (Exception e) {
+                                // TODO: handle exception
+                                DetailModel newDetail = new DetailModel();
+                            newDetail.setDetailName(detailName);
+                            newDetail.setDetailDesc(detailName);
                             return detailRepository.save(newDetail);
+                            }
                         });
             }
 
             // Check or create product
             final CategoryModel finalCategory = category;
             final DetailModel finalDetail = detail;
-            ProductModel product = productRepository.findByProductCode(stockDTO.getProductCode())
+            String productCode = stockDTO.getProductCode().trim();
+            ProductModel product = productRepository.findByProductCode(productCode)
                     .orElseGet(() -> {
                         ProductModel newProduct = new ProductModel();
                         newProduct.setProductName(stockDTO.getProductName());
@@ -257,13 +279,13 @@ public class StockServiceImpl implements StockService {
                 if (stockDTO.getStockAvalible() != null) {
                     stock.setStockAvalible(stockDTO.getStockAvalible());
                 }
-                if (stockDTO.getUnitPrice() > 0) {
+                if (stockDTO.getUnitPrice() >= 0) {
                     stock.setUnit_price(stockDTO.getUnitPrice());
                 }
-                if (stockDTO.getPvpPrice() > 0) {
+                if (stockDTO.getPvpPrice() >= 0) {
                     stock.setPvp_price(stockDTO.getPvpPrice());
                 }
-                if (stockDTO.getStockMax() > 0) {
+                if (stockDTO.getStockMax() >= 0) {
                     stock.setStockMax(stockDTO.getStockMax());
                 }
                 if (stockDTO.getStockMin() >= 0) {

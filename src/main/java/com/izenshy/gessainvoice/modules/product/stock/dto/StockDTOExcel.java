@@ -9,10 +9,10 @@ public class StockDTOExcel {
     private String productCode;
     private String categoryName;
     private String detailName;
-    private float stockQuantity;
+    private double stockQuantity;
     private Boolean stockAvalible;
-    private float unitPrice;
-    private float pvpPrice;
+    private double unitPrice;
+    private double pvpPrice;
     private int stockMax;
     private int stockMin;
     private Boolean applyTax;

@@ -28,10 +28,10 @@ public class StockModel implements Serializable {
     private Boolean stockAvalible;
 
     @Column(name="unit_price")
-    private float unit_price;
+    private double unit_price;
 
     @Column(name="pvp_price")
-    private float pvp_price;
+    private double pvp_price;
 
     @Column(name="stock_max")
     private int stockMax;

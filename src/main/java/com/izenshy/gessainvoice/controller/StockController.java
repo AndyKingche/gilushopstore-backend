@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -162,7 +161,32 @@ public class StockController {
 
             return ResponseEntity.ok(response);
         } else {
+            
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/by-code-aux-to-create/{productCode}/{outletId}")
+    public ResponseEntity<?> getStocktoCreate(
+            @PathVariable String productCode,
+            @PathVariable Long outletId) {
+
+        Optional<StockModel> stockOpt = stockService.findByProductCodeAndOutletId(productCode, outletId);
+
+        if (stockOpt.isPresent()) {
+            GessaApiResponse response = new GessaApiResponse<>();
+            
+            response.setData(stockOpt);
+            response.setMessage("El producto si existe");
+            response.setSuccess(false);
+            return ResponseEntity.ok(response);
+        } else {
+            GessaApiResponse response = new GessaApiResponse<>();
+            
+            response.setData(null);
+            response.setMessage("El producto no existe");
+            response.setSuccess(true);
+            return ResponseEntity.ok(response);
         }
     }
 
@@ -287,9 +311,12 @@ public class StockController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.out.println("*********");
+            System.out.println(e.getMessage());
             GessaApiResponse responseError = new GessaApiResponse();
             responseError.setMessage("Error uploading stock: \" + e.getMessage()");
             responseError.setSuccess(false);
+            
             return ResponseEntity.badRequest().body(responseError);
         }
     }
