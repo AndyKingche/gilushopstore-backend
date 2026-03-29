@@ -15,6 +15,7 @@ import com.izenshy.gessainvoice.modules.product.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, DetailRepository detailRepository, @Lazy ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository,
+            DetailRepository detailRepository, @Lazy ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.detailRepository = detailRepository;
@@ -118,32 +120,54 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductDeluxeDTO updateProductDeluxe(Long id, ProductDeluxeDTO productDeluxeDTO) {
-        ProductModel existing = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        // 1. Buscar producto existente
+        ProductModel existing = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        // 2. Validar código único (solo si cambia)
         if (!existing.getProductCode().equals(productDeluxeDTO.getProductCode())
                 && productRepository.existsByProductCode(productDeluxeDTO.getProductCode())) {
             throw new RuntimeException("Product code " + productDeluxeDTO.getProductCode() + " already exists");
         }
 
+        // 3. Actualizar datos básicos
         existing.setProductName(productDeluxeDTO.getProductName());
         existing.setProductCode(productDeluxeDTO.getProductCode());
         existing.setProductDesc(productDeluxeDTO.getProductDesc());
 
-        if (productDeluxeDTO.getCategoryName() != null) {
-            CategoryModel category = new CategoryModel();
-            category.setCategoryName(productDeluxeDTO.getCategoryName());
+        // 4. Manejo de Categoría (find or create)
+        if (productDeluxeDTO.getCategoryName() != null && !productDeluxeDTO.getCategoryName().isEmpty()) {
+            CategoryModel category = categoryRepository
+                    .findByCategoryNameIgnoreCase(productDeluxeDTO.getCategoryName().trim().toUpperCase())
+                    .orElseGet(() -> {
+                        CategoryModel newCategory = new CategoryModel();
+                        newCategory.setCategoryName(productDeluxeDTO.getCategoryName().trim().toUpperCase());
+                        return categoryRepository.save(newCategory);
+                    });
+
             existing.setCategoryId(category);
         }
 
-        if (productDeluxeDTO.getDetailName() != null) {
-            DetailModel detail = new DetailModel();
-            detail.setDetailName(productDeluxeDTO.getDetailName());
+        // 5. Manejo de Detalle (find or create)
+        if (productDeluxeDTO.getDetailName() != null && !productDeluxeDTO.getDetailName().isEmpty()) {
+            DetailModel detail = detailRepository
+                    .findByDetailNameIgnoreCase(productDeluxeDTO.getDetailName().trim().toUpperCase())
+                    .orElseGet(() -> {
+                        DetailModel newDetail = new DetailModel();
+                        newDetail.setDetailName(productDeluxeDTO.getDetailName().trim().toUpperCase());
+                        return detailRepository.save(newDetail);
+                    });
+
             existing.setDetailId(detail);
         }
 
+        // 6. Guardar producto actualizado
         ProductModel updated = productRepository.save(existing);
+
+        // 7. Mapear a DTO y retornar
         return mapToDeluxeDTO(updated);
     }
 
