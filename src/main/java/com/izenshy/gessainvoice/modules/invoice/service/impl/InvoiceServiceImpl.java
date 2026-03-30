@@ -358,4 +358,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return response;
     }
+
+    @Override
+    public List<InvoiceResponseDTO> getInvoicesByEnterpriseIdAndDate(Long enterpriseId, LocalDate date) {
+        // TODO Auto-generated method stub
+        List<InvoiceModel> invoices = invoiceRepository.findByEnterpriseId_IdAndInvoiceDate(enterpriseId, date);
+        return invoices.stream()
+                .map(invoiceMapper::modelToResponseDto)
+                .collect(Collectors.toList());
+    }
 }

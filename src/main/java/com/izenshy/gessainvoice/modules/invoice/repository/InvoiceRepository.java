@@ -30,4 +30,6 @@ public interface InvoiceRepository extends JpaRepository<InvoiceModel, Long> {
 
     @Query(value = "SELECT COALESCE( (SELECT invoice_total FROM public.invoice_header WHERE user_id = ?1 AND enterprise_id = ?2 AND invoice_date = ?3 ORDER BY invoice_date DESC, invoice_id DESC LIMIT 1), 0)", nativeQuery = true)
     BigDecimal getLastInvoiceTotalByUserAndEnterpriseAndDate(Long userId, Long enterpriseId, LocalDate date);
+
+    List<InvoiceModel> findByEnterpriseId_IdAndInvoiceDate(Long enterpriseId, LocalDate invoiceDate);
 }

@@ -9,6 +9,7 @@ import com.izenshy.gessainvoice.modules.invoice.service.InvoiceService;
 import com.izenshy.gessainvoice.modules.invoice.service.pdf.PdfGeneratorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/gessa/invoices")
 @Tag(name = "Invoice", description = "Esta sección es dedicada a las operaciones relacionadas de facturas del sistema")
-@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
+@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+        RequestMethod.DELETE })
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
@@ -36,24 +38,28 @@ public class InvoiceController {
     }
 
     @PostMapping
-    public ResponseEntity<GessaApiResponse<InvoiceResponseDTO>> createInvoice(@RequestBody InvoiceRequestDTO requestDTO) {
+    public ResponseEntity<GessaApiResponse<InvoiceResponseDTO>> createInvoice(
+            @RequestBody InvoiceRequestDTO requestDTO) {
         try {
             var invoice = invoiceService.saveInvoiceDTO(requestDTO);
             var responseDTO = invoiceService.getInvoicesByUserId(invoice.getId()).get(0); // Get the created invoice
             return ResponseEntity.ok(GessaApiResponse.success("Invoice created successfully", responseDTO));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error creating invoice: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error creating invoice: " + e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GessaApiResponse<InvoiceResponseDTO>> updateInvoice(@PathVariable Long id, @RequestBody InvoiceRequestDTO requestDTO) {
+    public ResponseEntity<GessaApiResponse<InvoiceResponseDTO>> updateInvoice(@PathVariable Long id,
+            @RequestBody InvoiceRequestDTO requestDTO) {
         try {
             var invoice = invoiceService.updateInvoiceDTO(id, requestDTO);
             var responseDTO = invoiceService.getInvoicesByUserId(invoice.getId()).get(0);
             return ResponseEntity.ok(GessaApiResponse.success("Invoice updated successfully", responseDTO));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error updating invoice: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error updating invoice: " + e.getMessage()));
         }
     }
 
@@ -61,10 +67,11 @@ public class InvoiceController {
     public ResponseEntity<GessaApiResponse<InvoiceHeaderDTO>> getInvoiceById(@PathVariable Long id) {
         try {
             var responseDTO = invoiceService.getInvoiceWithDetails(id);
-            //var responseDTO = invoiceService.getInvoicesById(invoice.getId()).get(0);
+            // var responseDTO = invoiceService.getInvoicesById(invoice.getId()).get(0);
             return ResponseEntity.ok(GessaApiResponse.success("Invoice retrieved successfully", responseDTO));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving invoice: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error retrieving invoice: " + e.getMessage()));
         }
     }
 
@@ -77,7 +84,8 @@ public class InvoiceController {
                     .toList();
             return ResponseEntity.ok(GessaApiResponse.success("Invoices retrieved successfully", responseDTOs));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
         }
     }
 
@@ -87,7 +95,8 @@ public class InvoiceController {
             invoiceService.deleteInvoice(id);
             return ResponseEntity.ok(GessaApiResponse.success("Invoice deleted successfully", null));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error deleting invoice: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error deleting invoice: " + e.getMessage()));
         }
     }
 
@@ -97,29 +106,35 @@ public class InvoiceController {
             var invoices = invoiceService.getInvoicesByUserId(userId);
             return ResponseEntity.ok(GessaApiResponse.success("Invoices retrieved successfully", invoices));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
         }
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<GessaApiResponse<List<InvoiceResponseDTO>>> getInvoicesByClientId(@PathVariable Long clientId) {
+    public ResponseEntity<GessaApiResponse<List<InvoiceResponseDTO>>> getInvoicesByClientId(
+            @PathVariable Long clientId) {
         try {
             var invoices = invoiceService.getInvoicesByClientId(clientId);
             return ResponseEntity.ok(GessaApiResponse.success("Invoices retrieved successfully", invoices));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
         }
     }
 
     @GetMapping("/enterprise/{enterpriseId}")
-    public ResponseEntity<GessaApiResponse<List<InvoiceResponseDTO>>> getInvoicesByEnterpriseId(@PathVariable Long enterpriseId) {
+    public ResponseEntity<GessaApiResponse<List<InvoiceResponseDTO>>> getInvoicesByEnterpriseId(
+            @PathVariable Long enterpriseId) {
         try {
             var invoices = invoiceService.getInvoicesByEnterpriseId(enterpriseId);
             return ResponseEntity.ok(GessaApiResponse.success("Invoices retrieved successfully", invoices));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error retrieving invoices: " + e.getMessage()));
         }
     }
+
     @GetMapping("/last/{enterpriseId}/{pointOutlet}")
     public ResponseEntity<InvoiceResponseDTO> getLastInvoiceByEnterpriseIdAndFactura(
             @PathVariable Long enterpriseId,
@@ -181,7 +196,7 @@ public class InvoiceController {
     @PostMapping("/regenerar-ticket/{invoiceId}")
     public ResponseEntity<byte[]> regenerarTicket(@PathVariable Long invoiceId) {
         try {
-            
+
             InvoiceHeaderDTO data = invoiceService.getInvoiceWithDetails(invoiceId);
 
             byte[] pdfBytes = pdfGeneratorService.re_generatePdfTicketHtml(data);
@@ -191,7 +206,8 @@ public class InvoiceController {
             headers.setContentType(MediaType.APPLICATION_PDF);
 
             // "inline" para que se abra en el navegador, "attachment" para forzar descarga
-            headers.setContentDispositionFormData("inline", "factura_" + data.getFechaAutorizacion()+""+data.getId() + ".pdf");
+            headers.setContentDispositionFormData("inline",
+                    "factura_" + data.getFechaAutorizacion() + "" + data.getId() + ".pdf");
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
@@ -210,10 +226,19 @@ public class InvoiceController {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate localDate = LocalDate.parse(date, formatter);
-            BigDecimal total = invoiceService.getLastInvoiceTotalByUserAndEnterpriseAndDate(userId, enterpriseId, localDate);
+            BigDecimal total = invoiceService.getLastInvoiceTotalByUserAndEnterpriseAndDate(userId, enterpriseId,
+                    localDate);
             return ResponseEntity.ok(GessaApiResponse.success("Last invoice total retrieved successfully", total));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving last invoice total: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(GessaApiResponse.error("Error retrieving last invoice total: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("/enterprise/{enterpriseId}/date/{date}")
+    public ResponseEntity<List<InvoiceResponseDTO>> getInvoicesByEnterpriseIdAndDate(
+            @PathVariable Long enterpriseId,
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
+        return ResponseEntity.ok(invoiceService.getInvoicesByEnterpriseIdAndDate(enterpriseId, date));
     }
 }

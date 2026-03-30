@@ -34,4 +34,5 @@ public interface InvoiceService {
 
     BigDecimal getLastInvoiceTotalByUserAndEnterpriseAndDate(Long userId, Long enterpriseId, LocalDate date);
     InvoiceHeaderDTO getInvoiceWithDetails(Long invoiceId);
+    List<InvoiceResponseDTO> getInvoicesByEnterpriseIdAndDate(Long enterpriseId, LocalDate date);
 }
