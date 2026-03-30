@@ -6,6 +6,8 @@ import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceResponseDTO;
 import com.izenshy.gessainvoice.modules.invoice.model.InvoiceDetailModel;
 import com.izenshy.gessainvoice.modules.invoice.model.InvoiceModel;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface InvoiceService {
@@ -28,4 +30,6 @@ public interface InvoiceService {
     InvoiceResponseDTO getLastInvoiceByEnterpriseIdandFactura(Long enterpriseId, String pointOutlet);
     InvoiceResponseDTO getLastInvoiceByEnterpriseIdandFacturaComprobante(Long enterpriseId, String pointOutlet);
     List<InvoiceResponseDTO> getAllInvoiceByEnterpriseIdandFacturaComprobante(Long enterpriseId, String pointOutlet);
+
+    BigDecimal getLastInvoiceTotalByUserAndEnterpriseAndDate(Long userId, Long enterpriseId, LocalDate date);
 }

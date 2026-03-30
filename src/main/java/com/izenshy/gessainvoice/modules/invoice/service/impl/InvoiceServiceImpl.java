@@ -19,6 +19,8 @@ import com.izenshy.gessainvoice.modules.person.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -272,5 +274,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return invoices.stream().map(invoiceMapper::modelToResponseDto)
                 .toList();
+    }
+
+    @Override
+    public BigDecimal getLastInvoiceTotalByUserAndEnterpriseAndDate(Long userId, Long enterpriseId, LocalDate date) {
+        return invoiceRepository.getLastInvoiceTotalByUserAndEnterpriseAndDate(userId, enterpriseId, date);
     }
 }

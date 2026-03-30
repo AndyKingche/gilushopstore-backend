@@ -14,6 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -171,6 +174,21 @@ public class InvoiceController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/ultima-venta-usuario")
+    public ResponseEntity<GessaApiResponse<BigDecimal>> getLastInvoiceTotal(
+            @RequestParam Long userId,
+            @RequestParam Long enterpriseId,
+            @RequestParam String date) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate localDate = LocalDate.parse(date, formatter);
+            BigDecimal total = invoiceService.getLastInvoiceTotalByUserAndEnterpriseAndDate(userId, enterpriseId, localDate);
+            return ResponseEntity.ok(GessaApiResponse.success("Last invoice total retrieved successfully", total));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving last invoice total: " + e.getMessage()));
         }
     }
 }
