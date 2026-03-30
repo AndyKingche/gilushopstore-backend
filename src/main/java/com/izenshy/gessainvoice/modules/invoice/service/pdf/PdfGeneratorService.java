@@ -1191,289 +1191,299 @@ public class PdfGeneratorService {
     ClientModel client = clientService.getClientById(invoice.getClientId().getId());
 
     String styles = """
-    @page {
-      size: auto;
-      margin: 6mm;
-    }
+        @page {
+          size: 80mm auto;
+          margin: 3mm 2mm;
+        }
 
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      font-size: 13px;
-      padding: 6px;
-      background: #fff;
-      color: #111;
-    }
+        * {
+          box-sizing: border-box;
+        }
 
-    .header {
-      width: 100%;
-      display: block;
-      align-items: center;
-      font-size: 13px;
-      text-align: center;
-    }
+        body {
+          font-family: 'Courier New', Courier, monospace;
+          margin: 0;
+          padding: 0;
+          font-size: 14pt;
+          width: 100%;
+          color: #000;
+          background: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
 
-    .valor-square-info {
-      overflow: hidden;
-    }
+        .header {
+          width: 100%;
+          display: block;
+          text-align: center;
+          font-size: 14pt;
+        }
 
-    .valor-square-info div:first-child {
-      float: left;
-    }
+        .valor-square-info {
+          overflow: hidden;
+        }
 
-    .valor-square-info div:last-child {
-      float: right;
-    }
+        .valor-square-info div:first-child {
+          float: left;
+        }
 
-    .ahorro-square-info {
-      overflow: hidden;
-      margin-top: 3px;
-    }
+        .valor-square-info div:last-child {
+          float: right;
+        }
 
-    .ahorro-square-info div:first-child {
-      float: left;
-      width: 70%;
-    }
+        .ahorro-square-info {
+          overflow: hidden;
+          margin-top: 3px;
+        }
 
-    .ahorro-square-info div:last-child {
-      float: right;
-      width: 30%;
-      text-align: right;
-    }
+        .ahorro-square-info div:first-child {
+          float: left;
+          width: 70%;
+        }
 
-    th,
-    td {
-      padding: 5px 4px;
-      text-align: left;
-      font-size: 12px;
-    }
+        .ahorro-square-info div:last-child {
+          float: right;
+          width: 30%;
+          text-align: right;
+        }
 
-    th {
-      font-weight: 700;
-      font-size: 13px;
-      border-bottom: 1px dashed #333;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
+        th,
+        td {
+          padding: 2px 2px;
+          text-align: left;
+          font-size: 12pt;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        th {
+          font-weight: 700;
+          font-size: 13pt;
+          border-bottom: 1px dashed #000;
+          text-transform: uppercase;
+        }
 
-    .right-align {
-      text-align: right;
-    }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
 
-    .center-align {
-      text-align: center;
-    }
+        .right-align {
+          text-align: right;
+        }
 
-    .left-align {
-      text-align: left;
-    }
+        .center-align {
+          text-align: center;
+        }
 
-    .totals {
-      width: 55%;
-      float: left;
-      margin-top: 8px;
-    }
+        .left-align {
+          text-align: left;
+        }
 
-    .totals table td {
-      border-collapse: collapse;
-      padding: 3px 4px;
-      font-size: 12px;
-    }
+        .totals {
+          width: 100%;
+          float: left;
+          margin-top: 4px;
+        }
 
-    .totals table tr:last-child td {
-      border-top: 1px dashed #333;
-      padding-top: 5px;
-    }
+        .totals table td {
+          border-collapse: collapse;
+          padding: 2px 2px;
+          font-size: 12pt;
+        }
 
-    .bold {
-      font-weight: 700;
-    }
+        .totals table tr:last-child td {
+          border-top: 1px dashed #000;
+          padding-top: 3px;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .center {
-      text-align: center;
-    }
+        .bold {
+          font-weight: 700;
+        }
 
-    .small-note {
-      font-size: 8px;
-      color: #555;
-      margin-top: 10px;
-    }
+        .center {
+          text-align: center;
+        }
 
-    .access-key-info {
-      text-align: center;
-    }
+        .small-note {
+          font-size: 9pt;
+          color: #555;
+          margin-top: 6px;
+        }
 
-    .access-key {
-      width: 30%;
-      display: inline-block;
-    }
+        .access-key-info {
+          text-align: center;
+        }
 
-    .info-factura {
-      overflow: hidden;
-    }
+        .access-key {
+          width: 30%;
+          display: inline-block;
+        }
 
-    .info-factura-no {
-      float: left;
-      margin-right: 1rem;
-      font-size: 15px;
-    }
+        .info-factura {
+          overflow: hidden;
+        }
 
-    .info-factura-numero {
-      font-size: 15px;
-      float: left;
-    }
+        .info-factura-no {
+          float: left;
+          margin-right: 4px;
+          font-size: 13pt;
+        }
 
-    .ruc-info {
-      overflow: hidden;
-      font-weight: 700;
-      font-size: 15px;
-    }
+        .info-factura-numero {
+          font-size: 13pt;
+          float: left;
+        }
 
-    .ruc {
-      float: left;
-      margin-right: 2rem;
-    }
+        .ruc-info {
+          overflow: hidden;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .factura-info {
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-      margin: 2px 0;
-      letter-spacing: 0.02em;
-    }
+        .ruc {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-info {
-      overflow: hidden;
-    }
+        .factura-info {
+          font-weight: 700;
+          font-size: 13pt;
+          text-align: center;
+          margin: 2px 0;
+        }
 
-    .fecha {
-      float: left;
-      margin-right: 1rem;
-    }
+        .fecha-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .ambiente-info {
-      overflow: hidden;
-    }
+        .fecha {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .ambiente {
-      float: left;
-      margin-right: 1rem;
-    }
+        .ambiente-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .emision-info {
-      overflow: hidden;
-    }
+        .ambiente {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .emision {
-      float: left;
-      margin-right: 1rem;
-    }
+        .emision-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .direccion-matriz-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .emision {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-matriz {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-matriz-info {
+          overflow: hidden;
+          font-size: 12pt;
+        }
 
-    .direccion-sucursal-info {
-      overflow: hidden;
-      font-size: 10px;
-    }
+        .direccion-matriz {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-sucursal {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-sucursal-info {
+          overflow: hidden;
+          font-size: 11pt;
+        }
 
-    .fin-info {
-      font-size: 10px;
-      margin-top: 2%;
-    }
+        .direccion-sucursal {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fin-info {
+          font-size: 11pt;
+          margin-top: 2%;
+        }
 
-    .nombres {
-      float: left;
-      margin-right: 3rem;
-      font-weight: bold;
-    }
+        .nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .identificacion-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .nombres {
+          float: left;
+          margin-right: 4px;
+          font-weight: bold;
+        }
 
-    .identificacion {
-      float: left;
-      margin-right: 2rem;
-    }
+        .identificacion-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .fecha-nombres-info {
-      overflow: hidden;
-      font-size: 13px;
-      margin-bottom: 3px;
-    }
+        .identificacion {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .fecha-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+          margin-bottom: 1px;
+        }
 
-    .direccion-nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fecha-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .direccion-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .resumen-factura {
-      width: 100%;
-      overflow: hidden;
-    }
+        .direccion-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .forma-pago {
-      margin-top: 3%;
-      width: 58%;
-      float: left;
-    }
+        .resumen-factura {
+          width: 100%;
+          overflow: hidden;
+        }
 
-    .clear {
-      clear: both;
-    }
+        .forma-pago {
+          margin-top: 3%;
+          width: 58%;
+          float: left;
+        }
 
-    .numero-autorizacion {
-      font-size: 10px;
-    }
+        .clear {
+          clear: both;
+        }
 
-    .invoice {
-      margin: 0 auto;
-      padding: 4px;
-      width: 100%;
-      max-width: 340px;
-    }
+        .numero-autorizacion {
+          font-size: 16pt;
+          word-break: break-all;
+          text-align: center;
+        }
 
-    .nombreempresa {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    """;
+        .invoice {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+        }
+
+        .nombreempresa {
+          font-size: 18pt;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        """;
     StringBuilder html = new StringBuilder();
     html.append(
         "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
@@ -1526,7 +1536,7 @@ public class PdfGeneratorService {
 
     html.append("        <div class=\"ambiente-info\">\n");
     html.append("          <div class=\"ambiente\" style=\"margin-top:3%;\"><strong>AMBIENTE:</strong></div>\n");
-    html.append("          <div style=\"margin-top:3%;\">PRUEBAS</div>\n");
+    html.append("          <div style=\"margin-top:3%;\">PRODUCCION</div>\n");
     html.append("        </div>\n");
 
     html.append("        <div class=\"emision-info\">\n");
@@ -1659,291 +1669,300 @@ public class PdfGeneratorService {
   public String re_generateTicketHtml(InvoiceHeaderDTO invoice) throws Exception {
 
     // Get enterprise info
-
     String styles = """
-    @page {
-      size: auto;
-      margin: 6mm;
-    }
+        @page {
+          size: 80mm auto;
+          margin: 3mm 2mm;
+        }
 
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      font-size: 13px;
-      padding: 6px;
-      background: #fff;
-      color: #111;
-    }
+        * {
+          box-sizing: border-box;
+        }
 
-    .header {
-      width: 100%;
-      display: block;
-      align-items: center;
-      font-size: 13px;
-      text-align: center;
-    }
+        body {
+          font-family: 'Courier New', Courier, monospace;
+          margin: 0;
+          padding: 0;
+          font-size: 14pt;
+          width: 100%;
+          color: #000;
+          background: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
 
-    .valor-square-info {
-      overflow: hidden;
-    }
+        .header {
+          width: 100%;
+          display: block;
+          text-align: center;
+          font-size: 14pt;
+        }
 
-    .valor-square-info div:first-child {
-      float: left;
-    }
+        .valor-square-info {
+          overflow: hidden;
+        }
 
-    .valor-square-info div:last-child {
-      float: right;
-    }
+        .valor-square-info div:first-child {
+          float: left;
+        }
 
-    .ahorro-square-info {
-      overflow: hidden;
-      margin-top: 3px;
-    }
+        .valor-square-info div:last-child {
+          float: right;
+        }
 
-    .ahorro-square-info div:first-child {
-      float: left;
-      width: 70%;
-    }
+        .ahorro-square-info {
+          overflow: hidden;
+          margin-top: 3px;
+        }
 
-    .ahorro-square-info div:last-child {
-      float: right;
-      width: 30%;
-      text-align: right;
-    }
+        .ahorro-square-info div:first-child {
+          float: left;
+          width: 70%;
+        }
 
-    th,
-    td {
-      padding: 5px 4px;
-      text-align: left;
-      font-size: 12px;
-    }
+        .ahorro-square-info div:last-child {
+          float: right;
+          width: 30%;
+          text-align: right;
+        }
 
-    th {
-      font-weight: 700;
-      font-size: 13px;
-      border-bottom: 1px dashed #333;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
+        th,
+        td {
+          padding: 2px 2px;
+          text-align: left;
+          font-size: 12pt;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        th {
+          font-weight: 700;
+          font-size: 13pt;
+          border-bottom: 1px dashed #000;
+          text-transform: uppercase;
+        }
 
-    .right-align {
-      text-align: right;
-    }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
 
-    .center-align {
-      text-align: center;
-    }
+        .right-align {
+          text-align: right;
+        }
 
-    .left-align {
-      text-align: left;
-    }
+        .center-align {
+          text-align: center;
+        }
 
-    .totals {
-      width: 55%;
-      float: left;
-      margin-top: 8px;
-    }
+        .left-align {
+          text-align: left;
+        }
 
-    .totals table td {
-      border-collapse: collapse;
-      padding: 3px 4px;
-      font-size: 12px;
-    }
+        .totals {
+          width: 100%;
+          float: left;
+          margin-top: 4px;
+        }
 
-    .totals table tr:last-child td {
-      border-top: 1px dashed #333;
-      padding-top: 5px;
-    }
+        .totals table td {
+          border-collapse: collapse;
+          padding: 2px 2px;
+          font-size: 12pt;
+        }
 
-    .bold {
-      font-weight: 700;
-    }
+        .totals table tr:last-child td {
+          border-top: 1px dashed #000;
+          padding-top: 3px;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .center {
-      text-align: center;
-    }
+        .bold {
+          font-weight: 700;
+        }
 
-    .small-note {
-      font-size: 8px;
-      color: #555;
-      margin-top: 10px;
-    }
+        .center {
+          text-align: center;
+        }
 
-    .access-key-info {
-      text-align: center;
-    }
+        .small-note {
+          font-size: 9pt;
+          color: #555;
+          margin-top: 6px;
+        }
 
-    .access-key {
-      width: 30%;
-      display: inline-block;
-    }
+        .access-key-info {
+          text-align: center;
+        }
 
-    .info-factura {
-      overflow: hidden;
-    }
+        .access-key {
+          width: 30%;
+          display: inline-block;
+        }
 
-    .info-factura-no {
-      float: left;
-      margin-right: 1rem;
-      font-size: 15px;
-    }
+        .info-factura {
+          overflow: hidden;
+        }
 
-    .info-factura-numero {
-      font-size: 15px;
-      float: left;
-    }
+        .info-factura-no {
+          float: left;
+          margin-right: 4px;
+          font-size: 13pt;
+        }
 
-    .ruc-info {
-      overflow: hidden;
-      font-weight: 700;
-      font-size: 15px;
-    }
+        .info-factura-numero {
+          font-size: 13pt;
+          float: left;
+        }
 
-    .ruc {
-      float: left;
-      margin-right: 2rem;
-    }
+        .ruc-info {
+          overflow: hidden;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .factura-info {
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-      margin: 2px 0;
-      letter-spacing: 0.02em;
-    }
+        .ruc {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-info {
-      overflow: hidden;
-    }
+        .factura-info {
+          font-weight: 700;
+          font-size: 13pt;
+          text-align: center;
+          margin: 2px 0;
+        }
 
-    .fecha {
-      float: left;
-      margin-right: 1rem;
-    }
+        .fecha-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .ambiente-info {
-      overflow: hidden;
-    }
+        .fecha {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .ambiente {
-      float: left;
-      margin-right: 1rem;
-    }
+        .ambiente-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .emision-info {
-      overflow: hidden;
-    }
+        .ambiente {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .emision {
-      float: left;
-      margin-right: 1rem;
-    }
+        .emision-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .direccion-matriz-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .emision {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-matriz {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-matriz-info {
+          overflow: hidden;
+          font-size: 12pt;
+        }
 
-    .direccion-sucursal-info {
-      overflow: hidden;
-      font-size: 10px;
-    }
+        .direccion-matriz {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-sucursal {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-sucursal-info {
+          overflow: hidden;
+          font-size: 11pt;
+        }
 
-    .fin-info {
-      font-size: 10px;
-      margin-top: 2%;
-    }
+        .direccion-sucursal {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fin-info {
+          font-size: 11pt;
+          margin-top: 2%;
+        }
 
-    .nombres {
-      float: left;
-      margin-right: 3rem;
-      font-weight: bold;
-    }
+        .nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .identificacion-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .nombres {
+          float: left;
+          margin-right: 4px;
+          font-weight: bold;
+        }
 
-    .identificacion {
-      float: left;
-      margin-right: 2rem;
-    }
+        .identificacion-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .fecha-nombres-info {
-      overflow: hidden;
-      font-size: 13px;
-      margin-bottom: 3px;
-    }
+        .identificacion {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .fecha-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+          margin-bottom: 1px;
+        }
 
-    .direccion-nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fecha-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .direccion-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .resumen-factura {
-      width: 100%;
-      overflow: hidden;
-    }
+        .direccion-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .forma-pago {
-      margin-top: 3%;
-      width: 58%;
-      float: left;
-    }
+        .resumen-factura {
+          width: 100%;
+          overflow: hidden;
+        }
 
-    .clear {
-      clear: both;
-    }
+        .forma-pago {
+          margin-top: 3%;
+          width: 58%;
+          float: left;
+        }
 
-    .numero-autorizacion {
-      font-size: 10px;
-    }
+        .clear {
+          clear: both;
+        }
 
-    .invoice {
-      margin: 0 auto;
-      padding: 4px;
-      width: 100%;
-      max-width: 340px;
-    }
+        .numero-autorizacion {
+          font-size: 16pt;
+          word-break: break-all;
+          text-align: center;
+        }
 
-    .nombreempresa {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    """;
+        .invoice {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+        }
+
+        .nombreempresa {
+          font-size: 18pt;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        """;
     StringBuilder html = new StringBuilder();
     html.append(
         "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
@@ -1996,7 +2015,7 @@ public class PdfGeneratorService {
 
     html.append("        <div class=\"ambiente-info\">\n");
     html.append("          <div class=\"ambiente\" style=\"margin-top:3%;\"><strong>AMBIENTE:</strong></div>\n");
-    html.append("          <div style=\"margin-top:3%;\">PRUEBAS</div>\n");
+    html.append("          <div style=\"margin-top:3%;\">PRODUCCION</div>\n");
     html.append("        </div>\n");
 
     html.append("        <div class=\"emision-info\">\n");
@@ -2138,290 +2157,300 @@ public class PdfGeneratorService {
     // ClientModel client =
     // clientService.getClientById(invoice.getClientId().getId());
 
-  String styles = """
-    @page {
-      size: auto;
-      margin: 6mm;
-    }
+    String styles = """
+        @page {
+          size: 80mm auto;
+          margin: 3mm 2mm;
+        }
 
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      font-size: 13px;
-      padding: 6px;
-      background: #fff;
-      color: #111;
-    }
+        * {
+          box-sizing: border-box;
+        }
 
-    .header {
-      width: 100%;
-      display: block;
-      align-items: center;
-      font-size: 13px;
-      text-align: center;
-    }
+        body {
+          font-family: 'Courier New', Courier, monospace;
+          margin: 0;
+          padding: 0;
+          font-size: 14pt;
+          width: 100%;
+          color: #000;
+          background: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
 
-    .valor-square-info {
-      overflow: hidden;
-    }
+        .header {
+          width: 100%;
+          display: block;
+          text-align: center;
+          font-size: 14pt;
+        }
 
-    .valor-square-info div:first-child {
-      float: left;
-    }
+        .valor-square-info {
+          overflow: hidden;
+        }
 
-    .valor-square-info div:last-child {
-      float: right;
-    }
+        .valor-square-info div:first-child {
+          float: left;
+        }
 
-    .ahorro-square-info {
-      overflow: hidden;
-      margin-top: 3px;
-    }
+        .valor-square-info div:last-child {
+          float: right;
+        }
 
-    .ahorro-square-info div:first-child {
-      float: left;
-      width: 70%;
-    }
+        .ahorro-square-info {
+          overflow: hidden;
+          margin-top: 3px;
+        }
 
-    .ahorro-square-info div:last-child {
-      float: right;
-      width: 30%;
-      text-align: right;
-    }
+        .ahorro-square-info div:first-child {
+          float: left;
+          width: 70%;
+        }
 
-    th,
-    td {
-      padding: 5px 4px;
-      text-align: left;
-      font-size: 12px;
-    }
+        .ahorro-square-info div:last-child {
+          float: right;
+          width: 30%;
+          text-align: right;
+        }
 
-    th {
-      font-weight: 700;
-      font-size: 13px;
-      border-bottom: 1px dashed #333;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
+        th,
+        td {
+          padding: 2px 2px;
+          text-align: left;
+          font-size: 12pt;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        th {
+          font-weight: 700;
+          font-size: 13pt;
+          border-bottom: 1px dashed #000;
+          text-transform: uppercase;
+        }
 
-    .right-align {
-      text-align: right;
-    }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
 
-    .center-align {
-      text-align: center;
-    }
+        .right-align {
+          text-align: right;
+        }
 
-    .left-align {
-      text-align: left;
-    }
+        .center-align {
+          text-align: center;
+        }
 
-    .totals {
-      width: 55%;
-      float: left;
-      margin-top: 8px;
-    }
+        .left-align {
+          text-align: left;
+        }
 
-    .totals table td {
-      border-collapse: collapse;
-      padding: 3px 4px;
-      font-size: 12px;
-    }
+        .totals {
+          width: 100%;
+          float: left;
+          margin-top: 4px;
+        }
 
-    .totals table tr:last-child td {
-      border-top: 1px dashed #333;
-      padding-top: 5px;
-    }
+        .totals table td {
+          border-collapse: collapse;
+          padding: 2px 2px;
+          font-size: 12pt;
+        }
 
-    .bold {
-      font-weight: 700;
-    }
+        .totals table tr:last-child td {
+          border-top: 1px dashed #000;
+          padding-top: 3px;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .center {
-      text-align: center;
-    }
+        .bold {
+          font-weight: 700;
+        }
 
-    .small-note {
-      font-size: 8px;
-      color: #555;
-      margin-top: 10px;
-    }
+        .center {
+          text-align: center;
+        }
 
-    .access-key-info {
-      text-align: center;
-    }
+        .small-note {
+          font-size: 9pt;
+          color: #555;
+          margin-top: 6px;
+        }
 
-    .access-key {
-      width: 30%;
-      display: inline-block;
-    }
+        .access-key-info {
+          text-align: center;
+        }
 
-    .info-factura {
-      overflow: hidden;
-    }
+        .access-key {
+          width: 30%;
+          display: inline-block;
+        }
 
-    .info-factura-no {
-      float: left;
-      margin-right: 1rem;
-      font-size: 15px;
-    }
+        .info-factura {
+          overflow: hidden;
+        }
 
-    .info-factura-numero {
-      font-size: 15px;
-      float: left;
-    }
+        .info-factura-no {
+          float: left;
+          margin-right: 4px;
+          font-size: 13pt;
+        }
 
-    .ruc-info {
-      overflow: hidden;
-      font-weight: 700;
-      font-size: 15px;
-    }
+        .info-factura-numero {
+          font-size: 13pt;
+          float: left;
+        }
 
-    .ruc {
-      float: left;
-      margin-right: 2rem;
-    }
+        .ruc-info {
+          overflow: hidden;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .factura-info {
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-      margin: 2px 0;
-      letter-spacing: 0.02em;
-    }
+        .ruc {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-info {
-      overflow: hidden;
-    }
+        .factura-info {
+          font-weight: 700;
+          font-size: 13pt;
+          text-align: center;
+          margin: 2px 0;
+        }
 
-    .fecha {
-      float: left;
-      margin-right: 1rem;
-    }
+        .fecha-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .ambiente-info {
-      overflow: hidden;
-    }
+        .fecha {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .ambiente {
-      float: left;
-      margin-right: 1rem;
-    }
+        .ambiente-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .emision-info {
-      overflow: hidden;
-    }
+        .ambiente {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .emision {
-      float: left;
-      margin-right: 1rem;
-    }
+        .emision-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .direccion-matriz-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .emision {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-matriz {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-matriz-info {
+          overflow: hidden;
+          font-size: 12pt;
+        }
 
-    .direccion-sucursal-info {
-      overflow: hidden;
-      font-size: 10px;
-    }
+        .direccion-matriz {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-sucursal {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-sucursal-info {
+          overflow: hidden;
+          font-size: 11pt;
+        }
 
-    .fin-info {
-      font-size: 10px;
-      margin-top: 2%;
-    }
+        .direccion-sucursal {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fin-info {
+          font-size: 11pt;
+          margin-top: 2%;
+        }
 
-    .nombres {
-      float: left;
-      margin-right: 3rem;
-      font-weight: bold;
-    }
+        .nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .identificacion-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .nombres {
+          float: left;
+          margin-right: 4px;
+          font-weight: bold;
+        }
 
-    .identificacion {
-      float: left;
-      margin-right: 2rem;
-    }
+        .identificacion-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .fecha-nombres-info {
-      overflow: hidden;
-      font-size: 13px;
-      margin-bottom: 3px;
-    }
+        .identificacion {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .fecha-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+          margin-bottom: 1px;
+        }
 
-    .direccion-nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fecha-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .direccion-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .resumen-factura {
-      width: 100%;
-      overflow: hidden;
-    }
+        .direccion-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .forma-pago {
-      margin-top: 3%;
-      width: 58%;
-      float: left;
-    }
+        .resumen-factura {
+          width: 100%;
+          overflow: hidden;
+        }
 
-    .clear {
-      clear: both;
-    }
+        .forma-pago {
+          margin-top: 3%;
+          width: 58%;
+          float: left;
+        }
 
-    .numero-autorizacion {
-      font-size: 10px;
-    }
+        .clear {
+          clear: both;
+        }
 
-    .invoice {
-      margin: 0 auto;
-      padding: 4px;
-      width: 100%;
-      max-width: 340px;
-    }
+        .numero-autorizacion {
+          font-size: 9pt;
+          word-break: break-all;
+          text-align: center;
+        }
 
-    .nombreempresa {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    """;
+        .invoice {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+        }
+
+        .nombreempresa {
+          font-size: 18pt;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        """;
     StringBuilder html = new StringBuilder();
     html.append(
         "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
@@ -2549,7 +2578,7 @@ public class PdfGeneratorService {
     html.append("</body>\n");
     html.append("</html>");
 
-    System.out.println(html.toString());
+   // System.out.println(html.toString());
 
     return html.toString();
   }
@@ -2557,289 +2586,299 @@ public class PdfGeneratorService {
   public String re_generateTicketComprobanteHtml(InvoiceHeaderDTO invoice) throws Exception {
 
     String styles = """
-    @page {
-      size: auto;
-      margin: 6mm;
-    }
+        @page {
+          size: 80mm auto;
+          margin: 3mm 2mm;
+        }
 
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      font-size: 13px;
-      padding: 6px;
-      background: #fff;
-      color: #111;
-    }
+        * {
+          box-sizing: border-box;
+        }
 
-    .header {
-      width: 100%;
-      display: block;
-      align-items: center;
-      font-size: 13px;
-      text-align: center;
-    }
+        body {
+          font-family: 'Courier New', Courier, monospace;
+          margin: 0;
+          padding: 0;
+          font-size: 14pt;
+          width: 100%;
+          color: #000;
+          background: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
 
-    .valor-square-info {
-      overflow: hidden;
-    }
+        .header {
+          width: 100%;
+          display: block;
+          text-align: center;
+          font-size: 14pt;
+        }
 
-    .valor-square-info div:first-child {
-      float: left;
-    }
+        .valor-square-info {
+          overflow: hidden;
+        }
 
-    .valor-square-info div:last-child {
-      float: right;
-    }
+        .valor-square-info div:first-child {
+          float: left;
+        }
 
-    .ahorro-square-info {
-      overflow: hidden;
-      margin-top: 3px;
-    }
+        .valor-square-info div:last-child {
+          float: right;
+        }
 
-    .ahorro-square-info div:first-child {
-      float: left;
-      width: 70%;
-    }
+        .ahorro-square-info {
+          overflow: hidden;
+          margin-top: 3px;
+        }
 
-    .ahorro-square-info div:last-child {
-      float: right;
-      width: 30%;
-      text-align: right;
-    }
+        .ahorro-square-info div:first-child {
+          float: left;
+          width: 70%;
+        }
 
-    th,
-    td {
-      padding: 5px 4px;
-      text-align: left;
-      font-size: 12px;
-    }
+        .ahorro-square-info div:last-child {
+          float: right;
+          width: 30%;
+          text-align: right;
+        }
 
-    th {
-      font-weight: 700;
-      font-size: 13px;
-      border-bottom: 1px dashed #333;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
+        th,
+        td {
+          padding: 2px 2px;
+          text-align: left;
+          font-size: 12pt;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        th {
+          font-weight: 700;
+          font-size: 13pt;
+          border-bottom: 1px dashed #000;
+          text-transform: uppercase;
+        }
 
-    .right-align {
-      text-align: right;
-    }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
 
-    .center-align {
-      text-align: center;
-    }
+        .right-align {
+          text-align: right;
+        }
 
-    .left-align {
-      text-align: left;
-    }
+        .center-align {
+          text-align: center;
+        }
 
-    .totals {
-      width: 55%;
-      float: left;
-      margin-top: 8px;
-    }
+        .left-align {
+          text-align: left;
+        }
 
-    .totals table td {
-      border-collapse: collapse;
-      padding: 3px 4px;
-      font-size: 12px;
-    }
+        .totals {
+          width: 100%;
+          float: left;
+          margin-top: 4px;
+        }
 
-    .totals table tr:last-child td {
-      border-top: 1px dashed #333;
-      padding-top: 5px;
-    }
+        .totals table td {
+          border-collapse: collapse;
+          padding: 2px 2px;
+          font-size: 12pt;
+        }
 
-    .bold {
-      font-weight: 700;
-    }
+        .totals table tr:last-child td {
+          border-top: 1px dashed #000;
+          padding-top: 3px;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .center {
-      text-align: center;
-    }
+        .bold {
+          font-weight: 700;
+        }
 
-    .small-note {
-      font-size: 8px;
-      color: #555;
-      margin-top: 10px;
-    }
+        .center {
+          text-align: center;
+        }
 
-    .access-key-info {
-      text-align: center;
-    }
+        .small-note {
+          font-size: 9pt;
+          color: #555;
+          margin-top: 6px;
+        }
 
-    .access-key {
-      width: 30%;
-      display: inline-block;
-    }
+        .access-key-info {
+          text-align: center;
+        }
 
-    .info-factura {
-      overflow: hidden;
-    }
+        .access-key {
+          width: 30%;
+          display: inline-block;
+        }
 
-    .info-factura-no {
-      float: left;
-      margin-right: 1rem;
-      font-size: 15px;
-    }
+        .info-factura {
+          overflow: hidden;
+        }
 
-    .info-factura-numero {
-      font-size: 15px;
-      float: left;
-    }
+        .info-factura-no {
+          float: left;
+          margin-right: 4px;
+          font-size: 13pt;
+        }
 
-    .ruc-info {
-      overflow: hidden;
-      font-weight: 700;
-      font-size: 15px;
-    }
+        .info-factura-numero {
+          font-size: 13pt;
+          float: left;
+        }
 
-    .ruc {
-      float: left;
-      margin-right: 2rem;
-    }
+        .ruc-info {
+          overflow: hidden;
+          font-weight: 700;
+          font-size: 13pt;
+        }
 
-    .factura-info {
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-      margin: 2px 0;
-      letter-spacing: 0.02em;
-    }
+        .ruc {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-info {
-      overflow: hidden;
-    }
+        .factura-info {
+          font-weight: 700;
+          font-size: 13pt;
+          text-align: center;
+          margin: 2px 0;
+        }
 
-    .fecha {
-      float: left;
-      margin-right: 1rem;
-    }
+        .fecha-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .ambiente-info {
-      overflow: hidden;
-    }
+        .fecha {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .ambiente {
-      float: left;
-      margin-right: 1rem;
-    }
+        .ambiente-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .emision-info {
-      overflow: hidden;
-    }
+        .ambiente {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .emision {
-      float: left;
-      margin-right: 1rem;
-    }
+        .emision-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .direccion-matriz-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .emision {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-matriz {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-matriz-info {
+          overflow: hidden;
+          font-size: 12pt;
+        }
 
-    .direccion-sucursal-info {
-      overflow: hidden;
-      font-size: 10px;
-    }
+        .direccion-matriz {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-sucursal {
-      float: left;
-      margin-right: 1rem;
-    }
+        .direccion-sucursal-info {
+          overflow: hidden;
+          font-size: 11pt;
+        }
 
-    .fin-info {
-      font-size: 10px;
-      margin-top: 2%;
-    }
+        .direccion-sucursal {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fin-info {
+          font-size: 11pt;
+          margin-top: 2%;
+        }
 
-    .nombres {
-      float: left;
-      margin-right: 3rem;
-      font-weight: bold;
-    }
+        .nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .identificacion-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .nombres {
+          float: left;
+          margin-right: 4px;
+          font-weight: bold;
+        }
 
-    .identificacion {
-      float: left;
-      margin-right: 2rem;
-    }
+        .identificacion-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .fecha-nombres-info {
-      overflow: hidden;
-      font-size: 13px;
-      margin-bottom: 3px;
-    }
+        .identificacion {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .fecha-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .fecha-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+          margin-bottom: 1px;
+        }
 
-    .direccion-nombres-info {
-      overflow: hidden;
-      font-size: 15px;
-    }
+        .fecha-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .direccion-nombres {
-      float: left;
-      margin-right: 2rem;
-    }
+        .direccion-nombres-info {
+          overflow: hidden;
+          font-size: 13pt;
+        }
 
-    .resumen-factura {
-      width: 100%;
-      overflow: hidden;
-    }
+        .direccion-nombres {
+          float: left;
+          margin-right: 4px;
+        }
 
-    .forma-pago {
-      margin-top: 3%;
-      width: 58%;
-      float: left;
-    }
+        .resumen-factura {
+          width: 100%;
+          overflow: hidden;
+        }
 
-    .clear {
-      clear: both;
-    }
+        .forma-pago {
+          margin-top: 3%;
+          width: 58%;
+          float: left;
+        }
 
-    .numero-autorizacion {
-      font-size: 10px;
-    }
+        .clear {
+          clear: both;
+        }
 
-    .invoice {
-      margin: 0 auto;
-      padding: 4px;
-      width: 100%;
-      max-width: 340px;
-    }
+        .numero-autorizacion {
+          font-size: 9pt;
+          word-break: break-all;
+          text-align: center;
+        }
 
-    .nombreempresa {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    """;
+        .invoice {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+        }
+
+        .nombreempresa {
+          font-size: 18pt;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        """;
     StringBuilder html = new StringBuilder();
     html.append(
         "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
@@ -2968,7 +3007,7 @@ public class PdfGeneratorService {
     html.append("</body>\n");
     html.append("</html>");
 
-    System.out.println(html.toString());
+    //System.out.println(html.toString());
 
     return html.toString();
   }
