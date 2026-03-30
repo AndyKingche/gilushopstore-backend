@@ -1,6 +1,7 @@
 package com.izenshy.gessainvoice.controller;
 
 import com.izenshy.gessainvoice.common.response.GessaApiResponse;
+import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceHeaderDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceRequestDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceResponseDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.PdfDocumentDTO;
@@ -57,10 +58,10 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GessaApiResponse<InvoiceResponseDTO>> getInvoiceById(@PathVariable Long id) {
+    public ResponseEntity<GessaApiResponse<InvoiceHeaderDTO>> getInvoiceById(@PathVariable Long id) {
         try {
-            var invoice = invoiceService.getInvoiceById(id);
-            var responseDTO = invoiceService.getInvoicesByUserId(invoice.getId()).get(0);
+            var responseDTO = invoiceService.getInvoiceWithDetails(id);
+            //var responseDTO = invoiceService.getInvoicesById(invoice.getId()).get(0);
             return ResponseEntity.ok(GessaApiResponse.success("Invoice retrieved successfully", responseDTO));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(GessaApiResponse.error("Error retrieving invoice: " + e.getMessage()));
@@ -167,6 +168,30 @@ public class InvoiceController {
 
             // "inline" para que se abra en el navegador, "attachment" para forzar descarga
             headers.setContentDispositionFormData("inline", "factura_" + data.getNfactura() + ".pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/regenerar-ticket/{invoiceId}")
+    public ResponseEntity<byte[]> regenerarTicket(@PathVariable Long invoiceId) {
+        try {
+            
+            InvoiceHeaderDTO data = invoiceService.getInvoiceWithDetails(invoiceId);
+
+            byte[] pdfBytes = pdfGeneratorService.re_generatePdfTicketHtml(data);
+
+            // Configuramos los encabezados HTTP
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+
+            // "inline" para que se abra en el navegador, "attachment" para forzar descarga
+            headers.setContentDispositionFormData("inline", "factura_" + data.getFechaAutorizacion()+""+data.getId() + ".pdf");
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);

@@ -9,7 +9,10 @@ import java.util.Optional;
 @Repository
 public interface EmitterRepository extends JpaRepository<EmitterModel, Long> {
     Optional<EmitterModel> findByEmitterRucAndEmitterStatusTrue(String ruc);
+
     Optional<EmitterModel> findByEmitterRucAndEmitterCodEstbAndEmitterPtoEmisionAndEmitterStatusTrue(String emitterRuc,
-                                                                                                     String emitterCodEstb,
-                                                                                                     String emitterPtoEmision);
+            String emitterCodEstb,
+            String emitterPtoEmision);
+
+    Optional<EmitterModel> findByEnterpriseId_IdAndEmitterCodEstb(Long enterpriseId, String emitterCodEstb);
 }

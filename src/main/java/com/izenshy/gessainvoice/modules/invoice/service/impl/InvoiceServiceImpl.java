@@ -2,7 +2,11 @@ package com.izenshy.gessainvoice.modules.invoice.service.impl;
 
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
+import com.izenshy.gessainvoice.modules.enterprises.emitter.repository.EmitterRepository;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceDetailRequestDTO;
+import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceDetailResponseDTO;
+import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceHeaderDTO;
+import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceHeaderDetailDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceRequestDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceResponseDTO;
 import com.izenshy.gessainvoice.modules.invoice.mapper.InvoiceDetailMapper;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,11 +39,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final EnterpriseRepository enterpriseRepository;
     private final InvoiceDetailRepository invoiceDetailRepository;
     private final InvoiceDetailMapper invoiceDetailMapper;
+    private final EmitterRepository emitterRepository;
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper,
-                              UserRepository userRepository, ClientRepository clientRepository,
-                              EnterpriseRepository enterpriseRepository, InvoiceDetailRepository invoiceDetailRepository, InvoiceDetailMapper invoiceDetailMapper) {
+            UserRepository userRepository, ClientRepository clientRepository,
+            EnterpriseRepository enterpriseRepository, InvoiceDetailRepository invoiceDetailRepository,
+            InvoiceDetailMapper invoiceDetailMapper, EmitterRepository emitterRepository) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.userRepository = userRepository;
@@ -46,6 +53,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.enterpriseRepository = enterpriseRepository;
         this.invoiceDetailRepository = invoiceDetailRepository;
         this.invoiceDetailMapper = invoiceDetailMapper;
+        this.emitterRepository = emitterRepository;
     }
 
     @Override
@@ -62,7 +70,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceRequestDTO.getClientId() != null && !clientRepository.existsById(invoiceRequestDTO.getClientId())) {
             throw new RuntimeException("Client does not exist");
         }
-        if (invoiceRequestDTO.getEnterpriseId() != null && !enterpriseRepository.existsById(invoiceRequestDTO.getEnterpriseId())) {
+        if (invoiceRequestDTO.getEnterpriseId() != null
+                && !enterpriseRepository.existsById(invoiceRequestDTO.getEnterpriseId())) {
             throw new RuntimeException("Enterprise does not exist");
         }
 
@@ -74,14 +83,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Si tiene detalles, los vinculamos con la factura guardada
         if (invoiceRequestDTO.getDetails() != null && !invoiceRequestDTO.getDetails().isEmpty()) {
-            List<com.izenshy.gessainvoice.modules.invoice.model.InvoiceDetailModel> detailModels =
-                    invoiceRequestDTO.getDetails().stream()
-                            .map(detailDTO -> {
-                                var detailModel = invoiceDetailMapper.requestDtoToModel(detailDTO);
-                                detailModel.setInvoice(savedInvoice); // 🔥 Aquí se vincula correctamente
-                                return detailModel;
-                            })
-                            .toList();
+            List<com.izenshy.gessainvoice.modules.invoice.model.InvoiceDetailModel> detailModels = invoiceRequestDTO
+                    .getDetails().stream()
+                    .map(detailDTO -> {
+                        var detailModel = invoiceDetailMapper.requestDtoToModel(detailDTO);
+                        detailModel.setInvoice(savedInvoice); // 🔥 Aquí se vincula correctamente
+                        return detailModel;
+                    })
+                    .toList();
 
             // Guardar todos los detalles
             invoiceDetailRepository.saveAll(detailModels);
@@ -99,7 +108,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
-
     @Override
     public InvoiceModel updateInvoiceDTO(Long id, InvoiceRequestDTO invoiceRequestDTO) {
         // Validate references exist
@@ -109,7 +117,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceRequestDTO.getClientId() != null && !clientRepository.existsById(invoiceRequestDTO.getClientId())) {
             throw new RuntimeException("Client does not exist");
         }
-        if (invoiceRequestDTO.getEnterpriseId() != null && !enterpriseRepository.existsById(invoiceRequestDTO.getEnterpriseId())) {
+        if (invoiceRequestDTO.getEnterpriseId() != null
+                && !enterpriseRepository.existsById(invoiceRequestDTO.getEnterpriseId())) {
             throw new RuntimeException("Enterprise does not exist");
         }
 
@@ -130,7 +139,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         existingInvoice.setIssuePoint(invoiceRequestDTO.getIssuePoint());
         existingInvoice.setEstablishment(invoiceRequestDTO.getEstablishment());
         existingInvoice.setInvoiceType(invoiceRequestDTO.getInvoiceType());
-        
+
         // Handle related entities
         if (invoiceRequestDTO.getUserId() != null) {
             UserModel user = new UserModel();
@@ -139,7 +148,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         } else {
             existingInvoice.setUserId(null);
         }
-        
+
         if (invoiceRequestDTO.getClientId() != null) {
             ClientModel client = new ClientModel();
             client.setId(invoiceRequestDTO.getClientId());
@@ -147,7 +156,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         } else {
             existingInvoice.setClientId(null);
         }
-        
+
         if (invoiceRequestDTO.getEnterpriseId() != null) {
             EnterpriseModel enterprise = new EnterpriseModel();
             enterprise.setId(invoiceRequestDTO.getEnterpriseId());
@@ -156,7 +165,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             existingInvoice.setEnterpriseId(null);
         }
 
-        // Update details - clear existing and add new ones (maintain the same collection reference)
+        // Update details - clear existing and add new ones (maintain the same
+        // collection reference)
         if (invoiceRequestDTO.getDetails() != null) {
             existingInvoice.getDetails().clear();
             List<InvoiceDetailModel> newDetails = invoiceRequestDTO.getDetails().stream()
@@ -264,13 +274,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<InvoiceResponseDTO> getAllInvoiceByEnterpriseIdandFacturaComprobante(Long enterpriseId, String pointOutlet) {
-        List<InvoiceModel> invoices =
-                invoiceRepository.findByEnterpriseId_IdAndInvoiceTypeAndIssuePointOrderByIdDesc(
-                        enterpriseId,
-                        "SAVED",
-                        pointOutlet
-                );
+    public List<InvoiceResponseDTO> getAllInvoiceByEnterpriseIdandFacturaComprobante(Long enterpriseId,
+            String pointOutlet) {
+        List<InvoiceModel> invoices = invoiceRepository.findByEnterpriseId_IdAndInvoiceTypeAndIssuePointOrderByIdDesc(
+                enterpriseId,
+                "SAVED",
+                pointOutlet);
 
         return invoices.stream().map(invoiceMapper::modelToResponseDto)
                 .toList();
@@ -279,5 +288,74 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public BigDecimal getLastInvoiceTotalByUserAndEnterpriseAndDate(Long userId, Long enterpriseId, LocalDate date) {
         return invoiceRepository.getLastInvoiceTotalByUserAndEnterpriseAndDate(userId, enterpriseId, date);
+    }
+
+    @Override
+    public InvoiceHeaderDTO getInvoiceWithDetails(Long invoiceId) {
+        InvoiceModel invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
+        // String nombreEmpresa =
+        // enterpriseRepository.findById(invoice.getEnterpriseId().getId())
+        // .orElseThrow(()-> new RuntimeException("Empresa no
+        // encontrada")).getEnterpriseName();
+        EnterpriseModel enterprise = enterpriseRepository.findById(invoice.getEnterpriseId().getId())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+
+        ClientModel client = null;
+
+        List<InvoiceHeaderDetailDTO> details = invoice.getDetails().stream().map(d -> {
+            InvoiceHeaderDetailDTO dto = new InvoiceHeaderDetailDTO();
+            dto.setId(d.getId());
+            dto.setCantidad(d.getQuantity());
+            dto.setDescripcion(d.getDescription());
+            dto.setTotalValue(d.getTotalValue());
+            dto.setPrecioUnitario(d.getUnitValue());
+            dto.setPrecioTotalSinImpuestoalueWithoutTax(d.getTotalValueWithoutTax());
+            return dto;
+        }).toList();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        InvoiceHeaderDTO response = new InvoiceHeaderDTO();
+
+        response.setId(invoice.getId());
+        response.setEnterpriseName(enterprise.getEnterpriseName());
+
+        response.setRucEnterprise(enterprise.getEnterpriseIdentification());
+        response.setFechaAutorizacion(invoice.getDateCreated().format(formatter));
+
+        if (invoice.getInvoiceType().equals("FACTURA")) {
+
+            client = clientRepository.findById(invoice.getClientId().getId())
+                    .orElseThrow(() -> new RuntimeException("Emitter no encontrado"));
+
+            response.setClientFullName(client.getClientFullName());
+            response.setClientRuc(client.getClientRuc());
+            response.setClientAddress(client.getClientAddress());
+            String addressEmpresa = emitterRepository
+                    .findByEnterpriseId_IdAndEmitterCodEstb(invoice.getEnterpriseId().getId(),
+                            invoice.getEstablishment())
+                    .orElseThrow(() -> new RuntimeException("Emitter no encontrado"))
+                    .getEmitterDirMatriz();
+
+            response.setEstablishmentAddress(addressEmpresa);
+            response.setEstablishment(invoice.getEstablishment());
+            response.setRemissionGuide(invoice.getRemissionGuide());
+            response.setSequential(invoice.getSequential());
+            response.setAccessKey(invoice.getAccessKey());
+
+        } else {
+
+            response.setClientFullName("COMPROBANTE DE VENTA");
+            response.setClientRuc("COMPROBANTE DE VENTA");
+            response.setClientAddress("COMPROBANTE DE VENTA");
+        }
+        response.setInvoiceDate(invoice.getInvoiceDate());
+        response.setInvoiceTotal(invoice.getInvoiceTotal());
+        response.setInvoiceDiscount(invoice.getInvoiceDiscount());
+        response.setInvoiceSubtotal(invoice.getInvoiceSubtotal());
+        response.setInvoiceDate(invoice.getInvoiceDate());
+        response.setDetalles(details);
+
+        return response;
     }
 }

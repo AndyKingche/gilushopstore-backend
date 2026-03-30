@@ -1,6 +1,7 @@
 package com.izenshy.gessainvoice.modules.invoice.service;
 
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceDetailRequestDTO;
+import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceHeaderDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceRequestDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceResponseDTO;
 import com.izenshy.gessainvoice.modules.invoice.model.InvoiceDetailModel;
@@ -32,4 +33,5 @@ public interface InvoiceService {
     List<InvoiceResponseDTO> getAllInvoiceByEnterpriseIdandFacturaComprobante(Long enterpriseId, String pointOutlet);
 
     BigDecimal getLastInvoiceTotalByUserAndEnterpriseAndDate(Long userId, Long enterpriseId, LocalDate date);
+    InvoiceHeaderDTO getInvoiceWithDetails(Long invoiceId);
 }
