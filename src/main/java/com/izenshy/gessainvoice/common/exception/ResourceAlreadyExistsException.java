@@ -1,4 +1,4 @@
-package com.izenshy.gessainvoice.common.response;
+package com.izenshy.gessainvoice.common.exception;
 
 public class ResourceAlreadyExistsException extends RuntimeException {
     public ResourceAlreadyExistsException(String message) {

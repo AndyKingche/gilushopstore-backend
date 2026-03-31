@@ -1,9 +1,13 @@
 package com.izenshy.gessainvoice.modules.enterprises.certificate.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.OutletModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.OutletRepository;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.service.OutletService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,7 @@ public class OutletServiceImpl implements OutletService {
 
     private final OutletRepository outletRepository;
     private final EnterpriseRepository enterpriseRepository;
+    private static final Logger logger = LoggerFactory.getLogger(OutletServiceImpl.class);
 
     @Autowired
     public OutletServiceImpl(OutletRepository outletRepository, EnterpriseRepository enterpriseRepository) {
@@ -31,7 +36,7 @@ public class OutletServiceImpl implements OutletService {
     public OutletModel save(OutletModel outlet) {
         // Validate that enterprise exists
         if (outlet.getEnterpriseId() == null || !enterpriseRepository.existsById(outlet.getEnterpriseId().getId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
         return outletRepository.save(outlet);
     }
@@ -40,7 +45,7 @@ public class OutletServiceImpl implements OutletService {
     public OutletModel update(OutletModel outlet) {
         // Validate that enterprise exists
         if (outlet.getEnterpriseId() == null || !enterpriseRepository.existsById(outlet.getEnterpriseId().getId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
         return outletRepository.save(outlet);
     }
@@ -63,7 +68,9 @@ public class OutletServiceImpl implements OutletService {
             outlet.setOutletStatus(false);
             outletRepository.save(outlet);
         } else {
-            throw new RuntimeException("Outlet not found with id " + outletId);
+            //throw new RuntimeException("Outlet not found with id " + outletId);
+            logger.error("Outlet not found with id " + outletId);
+            throw new ResourceNotFoundException("Outlet not found with id " + outletId);
         }
     }
 }

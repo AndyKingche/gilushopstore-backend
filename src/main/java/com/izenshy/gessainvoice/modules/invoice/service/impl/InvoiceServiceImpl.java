@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.invoice.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
 import com.izenshy.gessainvoice.modules.enterprises.emitter.repository.EmitterRepository;
@@ -65,14 +66,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceModel saveInvoiceDTO(InvoiceRequestDTO invoiceRequestDTO) {
         // Validate references exist
         if (invoiceRequestDTO.getUserId() != null && !userRepository.existsById(invoiceRequestDTO.getUserId())) {
-            throw new RuntimeException("User does not exist");
+            throw new ResourceNotFoundException("User does not exist");
         }
         if (invoiceRequestDTO.getClientId() != null && !clientRepository.existsById(invoiceRequestDTO.getClientId())) {
-            throw new RuntimeException("Client does not exist");
+            throw new ResourceNotFoundException("Client does not exist");
         }
         if (invoiceRequestDTO.getEnterpriseId() != null
                 && !enterpriseRepository.existsById(invoiceRequestDTO.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
 
         // Convertir el DTO a entidad (sin detalles todavía vinculados)
@@ -112,18 +113,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceModel updateInvoiceDTO(Long id, InvoiceRequestDTO invoiceRequestDTO) {
         // Validate references exist
         if (invoiceRequestDTO.getUserId() != null && !userRepository.existsById(invoiceRequestDTO.getUserId())) {
-            throw new RuntimeException("User does not exist");
+            throw new ResourceNotFoundException("User does not exist");
         }
         if (invoiceRequestDTO.getClientId() != null && !clientRepository.existsById(invoiceRequestDTO.getClientId())) {
-            throw new RuntimeException("Client does not exist");
+            throw new ResourceNotFoundException("Client does not exist");
         }
         if (invoiceRequestDTO.getEnterpriseId() != null
                 && !enterpriseRepository.existsById(invoiceRequestDTO.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
 
         InvoiceModel existingInvoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found with id " + id));
 
         // Update simple fields on the existing managed entity
         existingInvoice.setInvoiceStatus(invoiceRequestDTO.getInvoiceStatus());
@@ -186,7 +187,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceModel getInvoiceById(Long id) {
         return invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found with id " + id));
     }
 
     @Override
@@ -197,7 +198,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void deleteInvoice(Long id) {
         if (!invoiceRepository.existsById(id)) {
-            throw new RuntimeException("Invoice not found with id " + id);
+            throw new ResourceNotFoundException("Invoice not found with id " + id);
         }
         invoiceRepository.deleteById(id);
     }
@@ -205,7 +206,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceModel updateInvoiceDetails(Long invoiceId, List<InvoiceDetailRequestDTO> detailDTOs) {
         InvoiceModel invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Factura no encontrada con ID: " + invoiceId));
+                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrada con ID: " + invoiceId));
 
         // Asignar el invoiceId a cada detalle
         detailDTOs.forEach(detail -> detail.setInvoiceId(invoiceId));
@@ -293,13 +294,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceHeaderDTO getInvoiceWithDetails(Long invoiceId) {
         InvoiceModel invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrada"));
         // String nombreEmpresa =
         // enterpriseRepository.findById(invoice.getEnterpriseId().getId())
         // .orElseThrow(()-> new RuntimeException("Empresa no
         // encontrada")).getEnterpriseName();
         EnterpriseModel enterprise = enterpriseRepository.findById(invoice.getEnterpriseId().getId())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa no encontrada"));
 
         ClientModel client = null;
 
@@ -326,7 +327,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getInvoiceType().equals("FACTURA")) {
 
             client = clientRepository.findById(invoice.getClientId().getId())
-                    .orElseThrow(() -> new RuntimeException("Emitter no encontrado"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Emitter no encontrado"));
 
             response.setClientFullName(client.getClientFullName());
             response.setClientRuc(client.getClientRuc());
@@ -334,7 +335,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             String addressEmpresa = emitterRepository
                     .findByEnterpriseId_IdAndEmitterCodEstb(invoice.getEnterpriseId().getId(),
                             invoice.getEstablishment())
-                    .orElseThrow(() -> new RuntimeException("Emitter no encontrado"))
+                    .orElseThrow(() -> new ResourceNotFoundException("Emitter no encontrado"))
                     .getEmitterDirMatriz();
 
             response.setEstablishmentAddress(addressEmpresa);

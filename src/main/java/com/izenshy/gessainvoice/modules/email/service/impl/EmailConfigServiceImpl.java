@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.email.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.email.model.EmailConfigModel;
 import com.izenshy.gessainvoice.modules.email.repository.EmailConfigRepository;
 import com.izenshy.gessainvoice.modules.email.service.EmailConfigService;
@@ -8,6 +9,9 @@ import jakarta.activation.DataSource;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import jakarta.mail.util.ByteArrayDataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,8 @@ import java.util.Properties;
 public class EmailConfigServiceImpl implements EmailConfigService {
 
     private final EmailConfigRepository repository;
+    
+    private static final Logger logger = LoggerFactory.getLogger(EmailConfigServiceImpl.class);
 
     @Autowired
     public EmailConfigServiceImpl(EmailConfigRepository repository) {
@@ -26,7 +32,7 @@ public class EmailConfigServiceImpl implements EmailConfigService {
     @Override
     public EmailConfigModel getConfigByUser(String email) {
         return repository.findByUserEmail(email)
-                .orElseThrow(() -> new RuntimeException("Configuración de correo no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Configuración de correo no encontrada"));
     }
 
     @Override
@@ -47,9 +53,7 @@ public class EmailConfigServiceImpl implements EmailConfigService {
                 }
             });
 
-            session.setDebug(true);
-
-
+            //session.setDebug(true);
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(config.getUserEmail()));
@@ -75,7 +79,10 @@ public class EmailConfigServiceImpl implements EmailConfigService {
             Transport.send(message);
 
         } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar el correo: " + e.getMessage(), e);
+            //throw new RuntimeException("Error al enviar el correo: " + e.getMessage(), e);
+            logger.error("Error al enviar correo", e);
+            throw new ResourceNotFoundException("Error al enviar el correo: " + e.getMessage());
+
         }
     }
 
@@ -98,7 +105,7 @@ public class EmailConfigServiceImpl implements EmailConfigService {
                 }
             });
 
-            session.setDebug(true);
+            //session.setDebug(true);
 
 
 
@@ -126,7 +133,10 @@ public class EmailConfigServiceImpl implements EmailConfigService {
             Transport.send(message);
 
         } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar el correo: " + e.getMessage(), e);
+            //throw new RuntimeException("Error al enviar el correo: " + e.getMessage(), e);
+            logger.error("Error al enviar el correo: " + e.getMessage(), e);
+            throw new ResourceNotFoundException("Error al enviar el correo: " + e.getMessage());
+
         }
     }
 
@@ -152,6 +162,6 @@ public class EmailConfigServiceImpl implements EmailConfigService {
     @Override
     public EmailConfigModel getConfigByEnterprise(Long enterpriseId) {
         return repository.findByEnterpriseId_Id(enterpriseId)
-                .orElseThrow(() -> new RuntimeException("Configuración de correo no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Configuración de correo no encontrada"));
     }
 }

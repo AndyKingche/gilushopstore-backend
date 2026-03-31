@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.security.auth;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.person.user.model.UserModel;
 import com.izenshy.gessainvoice.modules.person.user.service.UserService;
 import com.izenshy.gessainvoice.security.jwt.JwtRequest;
@@ -44,7 +45,7 @@ public class JwtAuthenticationController {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
             final String token = jwtTokenProvider.generateToken(userDetails);
             final UserModel user = userService.getUserByUserName(authenticationRequest.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
             return ResponseEntity.ok(new JwtResponse(token, user.getUserRol(), user.getEnterpriseId().getId(), user.getUserFirstname() + " "+ user.getUserLastname(), user.getUserGender(), user.getId()));
         } catch (Exception e) {
@@ -60,7 +61,7 @@ public class JwtAuthenticationController {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
             final String token = jwtTokenProvider.generateToken(userDetails);
             final UserModel user = userService.getUserByUserName(authenticationRequest.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
             return ResponseEntity.ok(new JwtResponseOnlineShop(token, user.getUserFirstname() + " "+ user.getUserLastname()));
         } catch (Exception e) {

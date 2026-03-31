@@ -1,7 +1,8 @@
 package com.izenshy.gessainvoice.controller;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.common.response.GessaApiResponse;
-import com.izenshy.gessainvoice.common.response.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.email.dto.EmailRequestDTO;
 import com.izenshy.gessainvoice.modules.email.service.EmailConfigService;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
@@ -82,7 +83,7 @@ public class EmailController {
 
             return ResponseEntity.ok(response);
 
-        } catch (IllegalArgumentException e) {
+        } catch (BadRequestException e) {
             GessaApiResponse<String> response = new GessaApiResponse<>();
             response.setSuccess(false);
             response.setMessage("Error al decodificar el PDF en base64: " + e.getMessage());
@@ -218,7 +219,7 @@ public class EmailController {
 
             return ResponseEntity.ok(response);
 
-        } catch (IllegalArgumentException e) {
+        } catch (BadRequestException e) {
             GessaApiResponse<String> response = new GessaApiResponse<>();
             response.setSuccess(false);
             response.setMessage("Error al decodificar el PDF en base64: " + e.getMessage());

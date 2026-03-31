@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.invoice.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceDetailRequestDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceDetailResponseDTO;
 import com.izenshy.gessainvoice.modules.invoice.mapper.InvoiceDetailMapper;
@@ -24,7 +25,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
     private final InvoiceDetailMapper invoiceDetailMapper;
     private final StockRepository stockRepository;
     private final InvoiceRepository invoiceRepository;
-
+    
     @Autowired
     public InvoiceDetailServiceImpl(InvoiceDetailRepository invoiceDetailRepository,
                                     InvoiceDetailMapper invoiceDetailMapper,
@@ -52,7 +53,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
                     )
                     .isPresent();
             if (!stockExists) {
-                throw new RuntimeException("Stock does not exist");
+                throw new ResourceNotFoundException("Stock does not exist");
             }
         }
 
@@ -88,12 +89,12 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
                     )
                     .isPresent();
             if (!stockExists) {
-                throw new RuntimeException("Stock does not exist");
+                throw new ResourceNotFoundException("Stock does not exist");
             }
         }
 
         InvoiceDetailModel existingDetail = invoiceDetailRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Invoice detail not found with id " + id
                 ));
 
@@ -104,7 +105,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
     @Override
     public InvoiceDetailModel getInvoiceDetailById(Long id) {
         return invoiceDetailRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice detail not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice detail not found with id " + id));
     }
 
     @Override
@@ -123,7 +124,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
     @Override
     public void deleteInvoiceDetail(Long id) {
         if (!invoiceDetailRepository.existsById(id)) {
-            throw new RuntimeException("Invoice detail not found with id " + id);
+            throw new ResourceNotFoundException("Invoice detail not found with id " + id);
         }
         invoiceDetailRepository.deleteById(id);
     }
@@ -145,7 +146,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
                         .isPresent();
 
                 if (!stockExists) {
-                    throw new RuntimeException("Stock does not exist");
+                    throw new ResourceNotFoundException("Stock does not exist");
                 }
             }
 
@@ -153,7 +154,7 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
             if (dto.getId() != null) {
                 InvoiceDetailModel existing = invoiceDetailRepository.findById(dto.getId())
                         .orElseThrow(() ->
-                                new RuntimeException(
+                                new ResourceNotFoundException(
                                         "Invoice detail not found with id " + dto.getId()
                                 )
                         );

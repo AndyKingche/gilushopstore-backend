@@ -1,4 +1,4 @@
-package com.izenshy.gessainvoice.common.response;
+package com.izenshy.gessainvoice.common.exception;
 
 public class ResourceNotFoundException extends RuntimeException{
     public ResourceNotFoundException(String message) {

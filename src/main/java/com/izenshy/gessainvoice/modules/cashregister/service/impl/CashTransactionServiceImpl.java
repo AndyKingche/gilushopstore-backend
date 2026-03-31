@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.cashregister.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.cashregister.dto.CashTransactionRequestDTO;
 import com.izenshy.gessainvoice.modules.cashregister.dto.CashTransactionResponseDTO;
 import com.izenshy.gessainvoice.modules.cashregister.mapper.CashTransactionMapper;
@@ -45,17 +46,17 @@ public class CashTransactionServiceImpl implements CashTransactionService {
     public CashTransactionModel createTransaction(CashTransactionRequestDTO requestDTO) {
         // Validate that cash register exists and is open
         if (requestDTO.getCashRegisterId() == null || !cashRegisterRepository.existsById(requestDTO.getCashRegisterId())) {
-            throw new RuntimeException("Cash register does not exist");
+            throw new ResourceNotFoundException("Cash register does not exist");
         }
 
         // Validate that user exists
         if (requestDTO.getUserId() == null || !userRepository.existsById(requestDTO.getUserId())) {
-            throw new RuntimeException("User does not exist");
+            throw new ResourceNotFoundException("User does not exist");
         }
 
         // Validate invoice if provided
         if (requestDTO.getInvoiceId() != null && !invoiceRepository.existsById(requestDTO.getInvoiceId())) {
-            throw new RuntimeException("Invoice does not exist");
+            throw new ResourceNotFoundException("Invoice does not exist");
         }
 
         CashTransactionModel transaction = cashTransactionMapper.dtoToModel(requestDTO);
@@ -77,14 +78,14 @@ public class CashTransactionServiceImpl implements CashTransactionService {
     @Override
     public CashTransactionModel getTransactionById(Long id) {
         return cashTransactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
     }
 
     @Override
     public CashTransactionResponseDTO getTransactionByUuid(UUID uuid) {
         return cashTransactionRepository.findByTransactionUuid(uuid)
                 .map(cashTransactionMapper::modelToResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
     }
 
     @Override
@@ -127,7 +128,7 @@ public class CashTransactionServiceImpl implements CashTransactionService {
     @Override
     public void deleteTransaction(Long id) {
         CashTransactionModel transaction = cashTransactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
 
         Long cashRegisterId = transaction.getCashRegisterId().getId();
         cashTransactionRepository.deleteById(id);
@@ -149,7 +150,7 @@ public class CashTransactionServiceImpl implements CashTransactionService {
     public CashTransactionModel closeTransaction(Long transactionId) {
         CashTransactionModel transaction = cashTransactionRepository
                 .findById(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
 
 
         transaction.setReferenceNumber("CERRADO");
@@ -159,7 +160,7 @@ public class CashTransactionServiceImpl implements CashTransactionService {
 
     private void updateCashRegisterTotals(Long cashRegisterId) {
         CashRegisterModel cashRegister = cashRegisterRepository.findById(cashRegisterId)
-                .orElseThrow(() -> new RuntimeException("Cash register not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cash register not found"));
 
         // Calculate total sales cash
         BigDecimal totalSalesCash = cashTransactionRepository.findByCashRegisterId_Id(cashRegisterId)

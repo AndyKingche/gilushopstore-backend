@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.product.product.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
 import com.izenshy.gessainvoice.modules.product.product.model.CategoryModel;
 import com.izenshy.gessainvoice.modules.product.product.repository.CategoryRepository;
 import com.izenshy.gessainvoice.modules.product.product.service.CategoryService;
@@ -31,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryModel create(CategoryModel category) {
         if (categoryRepository.existsByCategoryNameIgnoreCase(category.getCategoryName())) {
-            throw new IllegalArgumentException("Category with name '" + category.getCategoryName() + "' already exists.");
+            throw new ResourceAlreadyExistsException("Category with name '" + category.getCategoryName() + "' already exists.");
         }
         return categoryRepository.save(category);
     }
@@ -45,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
         // Validar duplicados si cambia el nombre
         if (!existing.getCategoryName().equalsIgnoreCase(category.getCategoryName())
                 && categoryRepository.existsByCategoryNameIgnoreCase(category.getCategoryName())) {
-            throw new IllegalArgumentException("Category with name '" + category.getCategoryName() + "' already exists.");
+            throw new ResourceAlreadyExistsException("Category with name '" + category.getCategoryName() + "' already exists.");
         }
 
         existing.setCategoryName(category.getCategoryName());

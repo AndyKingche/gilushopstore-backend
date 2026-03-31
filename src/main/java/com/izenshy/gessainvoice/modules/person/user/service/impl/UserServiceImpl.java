@@ -1,5 +1,8 @@
 package com.izenshy.gessainvoice.modules.person.user.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
 import com.izenshy.gessainvoice.modules.person.user.dto.UserDTO;
@@ -45,19 +48,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel saveUser(UserDTO newUser) {
         if (newUser == null) {
-            throw new IllegalArgumentException("UserDTO cannot be null");
+            throw new BadRequestException("UserDTO cannot be null");
         }
         if (newUser.getEnterpriseId() == null) {
-            throw new IllegalArgumentException("Enterprise ID cannot be null");
+            throw new BadRequestException("Enterprise ID cannot be null");
         }
 
         Optional<UserModel> existingUser = userRepository.findByUserRucAndUserStatusTrue(newUser.getUserRuc());
         if (existingUser.isPresent()) {
-            throw new IllegalArgumentException("El RUC ya está registrado: " + newUser.getUserRuc());
+            throw new ResourceAlreadyExistsException("El RUC ya está registrado: " + newUser.getUserRuc());
         }
 
         EnterpriseModel existingEnteprise = enterpriseRepository.findById(newUser.getEnterpriseId())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrado con id: " + newUser.getEnterpriseId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa no encontrado con id: " + newUser.getEnterpriseId()));
 
         UserModel userEntity = new UserModel();
         userEntity.setUserName(newUser.getUserName());
@@ -76,16 +79,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel updateUser(Long userId, UserDTO updateUser) {
         if (updateUser == null) {
-            throw new IllegalArgumentException("El objeto UserDTO no puede ser null.");
+            throw new BadRequestException("El objeto UserDTO no puede ser null.");
         }
 
         UserModel existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado con ID: " + userId));
 
         if (updateUser.getUserRuc() != null && !updateUser.getUserRuc().equals(existingUser.getUserRuc())) {
             boolean rucExists = userRepository.findByUserRucAndUserStatusTrue(updateUser.getUserRuc()).isPresent();
             if (rucExists) {
-                throw new IllegalArgumentException("Ya existe un usuario activo con este RUC: " + updateUser.getUserRuc());
+                throw new ResourceAlreadyExistsException("Ya existe un usuario activo con este RUC: " + updateUser.getUserRuc());
             }
             existingUser.setUserRuc(updateUser.getUserRuc());
         }

@@ -1,5 +1,7 @@
 package com.izenshy.gessainvoice.modules.product.product.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.product.product.dto.CatalogBrandProductDTO;
 import com.izenshy.gessainvoice.modules.product.product.mapper.CatalogBrandProductMapper;
 import com.izenshy.gessainvoice.modules.product.product.model.CatalogBrand;
@@ -38,15 +40,15 @@ public class CatalogBrandProductServiceImpl implements CatalogBrandProductServic
     public CatalogBrandProductDTO createCatalogBrandProduct(CatalogBrandProductDTO catalogBrandProductDTO) {
         Optional<CatalogBrand> brand = catalogBrandRepository.findById(catalogBrandProductDTO.getBrandId());
         if (brand.isEmpty()) {
-            throw new RuntimeException("Brand not found");
+            throw new ResourceNotFoundException("Brand not found");
         }
         Optional<ProductModel> product = productRepository.findById(catalogBrandProductDTO.getProductId());
         if (product.isEmpty()) {
-            throw new RuntimeException("Product not found");
+            throw new ResourceNotFoundException("Product not found");
         }
 
         if (catalogBrandProductRepository.existsByBrand_IdAndProduct_Id(catalogBrandProductDTO.getBrandId(), catalogBrandProductDTO.getProductId())) {
-            throw new RuntimeException("Association already exists");
+            throw new ResourceAlreadyExistsException("Association already exists");
         }
 
         CatalogBrandProduct catalogBrandProduct = catalogBrandProductMapper.dtoToModel(catalogBrandProductDTO);
@@ -59,7 +61,7 @@ public class CatalogBrandProductServiceImpl implements CatalogBrandProductServic
     @Override
     public void deleteCatalogBrandProduct(Long id) {
         if (!catalogBrandProductRepository.existsById(id)) {
-            throw new RuntimeException("CatalogBrandProduct not found");
+            throw new ResourceNotFoundException("CatalogBrandProduct not found");
         }
         catalogBrandProductRepository.deleteById(id);
     }
@@ -68,7 +70,7 @@ public class CatalogBrandProductServiceImpl implements CatalogBrandProductServic
     public CatalogBrandProductDTO getCatalogBrandProductById(Long id) {
         Optional<CatalogBrandProduct> catalogBrandProduct = catalogBrandProductRepository.findById(id);
         if (catalogBrandProduct.isEmpty()) {
-            throw new RuntimeException("CatalogBrandProduct not found");
+            throw new ResourceNotFoundException("CatalogBrandProduct not found");
         }
         return catalogBrandProductMapper.modelToDTO(catalogBrandProduct.get());
     }

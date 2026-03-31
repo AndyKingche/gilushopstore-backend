@@ -1,5 +1,7 @@
 package com.izenshy.gessainvoice.controller;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
 import com.izenshy.gessainvoice.common.response.GessaPDFResponse;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.service.DigitalCertificateService;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceResponseDTO;
@@ -63,7 +65,7 @@ public class SRIController {
             return ResponseEntity.ok(xmlFactura);
         } catch (Exception e) {
             System.out.println("ERROR"+e.getMessage());
-            throw new RuntimeException(e);
+            throw new BadRequestException(e.getMessage());
         }
 
     }

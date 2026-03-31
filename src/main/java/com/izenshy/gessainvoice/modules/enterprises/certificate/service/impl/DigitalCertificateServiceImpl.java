@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.enterprises.certificate.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.DigitalCertificateModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.DigitalCertificateRepository;
@@ -71,10 +72,10 @@ public class DigitalCertificateServiceImpl implements DigitalCertificateService 
                 });
 
         UserModel user = userRepository.findById(enterpriseId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + enterpriseId));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + enterpriseId));
 
         EnterpriseModel enterprise = enterpriseRepository.findById(enterpriseId)
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrado con id: " + enterpriseId));
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa no encontrado con id: " + enterpriseId));
 
         DigitalCertificateModel newCert = new DigitalCertificateModel();
         newCert.setDigCertName(enterprise.getEnterpriseOwnerName());

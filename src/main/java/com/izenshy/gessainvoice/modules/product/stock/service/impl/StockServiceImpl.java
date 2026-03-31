@@ -20,6 +20,7 @@ import com.izenshy.gessainvoice.modules.product.product.service.DetailService;
 import com.izenshy.gessainvoice.modules.product.product.service.ProductService;
 import com.izenshy.gessainvoice.modules.product.product.service.TaxService;
 import com.izenshy.gessainvoice.modules.product.product.model.TaxModel;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.OutletModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.OutletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +105,7 @@ public class StockServiceImpl implements StockService {
     public StockDTO getByProductAndOutlet(Long productId, Long outletId) {
         return stockRepository.findByIdProductIdAndIdOutletId(productId, outletId)
                 .map(stockMapper::modelToDTO)
-                .orElseThrow(() -> new RuntimeException("Stock not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Stock not found"));
     }
 
     @Override
@@ -126,7 +127,7 @@ public class StockServiceImpl implements StockService {
     public StockDeluxeDTO getDeluxe(Long productId, Long outletId) {
         return stockRepository.findByIdProductIdAndIdOutletId(productId, outletId)
                 .map(stockMapper::modelToDeluxeDTO)
-                .orElseThrow(() -> new RuntimeException("Stock not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Stock not found"));
     }
 
     @Override
@@ -207,7 +208,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public void uploadStockList(List<StockDeluxeDTO> stockList, Long outletId) {
         OutletModel outlet = outletRepository.findById(outletId)
-                .orElseThrow(() -> new RuntimeException("Outlet not found with id: " + outletId));
+                .orElseThrow(() -> new ResourceNotFoundException("Outlet not found with id: " + outletId));
 
         for (StockDeluxeDTO stockDTO : stockList) {
             // Check or create category

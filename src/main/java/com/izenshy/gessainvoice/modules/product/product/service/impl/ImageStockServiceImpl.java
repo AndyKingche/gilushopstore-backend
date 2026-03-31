@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.product.product.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.product.product.dto.ImageStockDTO;
 import com.izenshy.gessainvoice.modules.product.product.mapper.ImageStockMapper;
 import com.izenshy.gessainvoice.modules.product.product.model.ImageStock;
@@ -32,7 +33,7 @@ public class ImageStockServiceImpl implements ImageStockService {
     public ImageStockDTO createImageStock(ImageStockDTO imageStockDTO) {
         Optional<StockModel> stock = stockRepository.findByIdProductIdAndIdOutletId(imageStockDTO.getStockProductId(), imageStockDTO.getStockOutletId());
         if (stock.isEmpty()) {
-            throw new RuntimeException("Stock not found");
+            throw new ResourceNotFoundException("Stock not found");
         }
         ImageStock imageStock = imageStockMapper.dtoToModel(imageStockDTO);
         imageStock.setStock(stock.get());
@@ -44,11 +45,11 @@ public class ImageStockServiceImpl implements ImageStockService {
     public ImageStockDTO updateImageStock(Long id, ImageStockDTO imageStockDTO) {
         Optional<ImageStock> existing = imageStockRepository.findById(id);
         if (existing.isEmpty()) {
-            throw new RuntimeException("ImageStock not found");
+            throw new ResourceNotFoundException("ImageStock not found");
         }
         Optional<StockModel> stock = stockRepository.findByIdProductIdAndIdOutletId(imageStockDTO.getStockProductId(), imageStockDTO.getStockOutletId());
         if (stock.isEmpty()) {
-            throw new RuntimeException("Stock not found");
+            throw new ResourceNotFoundException("Stock not found");
         }
         ImageStock imageStock = imageStockMapper.dtoToModel(imageStockDTO);
         imageStock.setId(id);
@@ -60,7 +61,7 @@ public class ImageStockServiceImpl implements ImageStockService {
     @Override
     public void deleteImageStock(Long id) {
         if (!imageStockRepository.existsById(id)) {
-            throw new RuntimeException("ImageStock not found");
+            throw new ResourceNotFoundException("ImageStock not found");
         }
         imageStockRepository.deleteById(id);
     }
@@ -69,7 +70,7 @@ public class ImageStockServiceImpl implements ImageStockService {
     public ImageStockDTO getImageStockById(Long id) {
         Optional<ImageStock> imageStock = imageStockRepository.findById(id);
         if (imageStock.isEmpty()) {
-            throw new RuntimeException("ImageStock not found");
+            throw new ResourceNotFoundException("ImageStock not found");
         }
         return imageStockMapper.modelToDTO(imageStock.get());
     }

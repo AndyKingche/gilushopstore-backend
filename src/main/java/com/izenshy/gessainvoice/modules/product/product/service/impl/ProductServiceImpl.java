@@ -1,5 +1,8 @@
 package com.izenshy.gessainvoice.modules.product.product.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.product.product.dto.ListProductDTO;
 import com.izenshy.gessainvoice.modules.product.product.dto.ListProductDeluxeDTO;
 import com.izenshy.gessainvoice.modules.product.product.dto.ProductDTO;
@@ -40,11 +43,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
 
         if (productDTO.getProductCode() == null || productDTO.getProductCode().isEmpty()) {
-            throw new RuntimeException("Product code is required");
+            throw new BadRequestException("Product code is required");
         }
 
         productRepository.findByProductCode(productDTO.getProductCode()).ifPresent(p -> {
-            throw new RuntimeException("Product with code " + productDTO.getProductCode() + " already exists");
+            throw new ResourceAlreadyExistsException("Product with code " + productDTO.getProductCode() + " already exists");
         });
 
         ProductModel product = productMapper.dtoToModel(productDTO);
@@ -55,11 +58,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
         ProductModel existing = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (!existing.getProductCode().equals(productDTO.getProductCode())
                 && productRepository.existsByProductCode(productDTO.getProductCode())) {
-            throw new RuntimeException("Product code " + productDTO.getProductCode() + " already exists");
+            throw new ResourceNotFoundException("Product code " + productDTO.getProductCode() + " already exists");
         }
 
         existing.setProductName(productDTO.getProductName());
@@ -84,11 +87,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDeluxeDTO createProductDeluxe(ProductDeluxeDTO productDeluxeDTO) {
         if (productDeluxeDTO.getProductCode() == null || productDeluxeDTO.getProductCode().isEmpty()) {
-            throw new RuntimeException("Product code is required");
+            throw new BadRequestException("Product code is required");
         }
 
         productRepository.findByProductCode(productDeluxeDTO.getProductCode()).ifPresent(p -> {
-            throw new RuntimeException("Product with code " + productDeluxeDTO.getProductCode() + " already exists");
+            throw new ResourceAlreadyExistsException("Product with code " + productDeluxeDTO.getProductCode() + " already exists");
         });
 
         ProductModel product = productMapper.deluxeDTOToModel(productDeluxeDTO);
@@ -125,12 +128,12 @@ public class ProductServiceImpl implements ProductService {
 
         // 1. Buscar producto existente
         ProductModel existing = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 
         // 2. Validar código único (solo si cambia)
         if (!existing.getProductCode().equals(productDeluxeDTO.getProductCode())
                 && productRepository.existsByProductCode(productDeluxeDTO.getProductCode())) {
-            throw new RuntimeException("Product code " + productDeluxeDTO.getProductCode() + " already exists");
+            throw new ResourceAlreadyExistsException("Product code " + productDeluxeDTO.getProductCode() + " already exists");
         }
 
         // 3. Actualizar datos básicos
@@ -190,7 +193,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO getProductById(Long id) {
         ProductModel product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         return productMapper.modelToDTO(product);
     }
 

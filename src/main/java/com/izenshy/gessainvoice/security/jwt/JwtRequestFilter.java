@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.security.jwt;
 
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
 import com.izenshy.gessainvoice.security.service.JWTUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -42,7 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
+            } catch (ResourceAlreadyExistsException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
                 System.out.println("JWT Token has expired");

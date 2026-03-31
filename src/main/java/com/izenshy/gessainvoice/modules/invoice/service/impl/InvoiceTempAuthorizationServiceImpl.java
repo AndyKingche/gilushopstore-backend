@@ -1,6 +1,6 @@
 package com.izenshy.gessainvoice.modules.invoice.service.impl;
 
-import com.izenshy.gessainvoice.common.response.ResourceNotFoundException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.OutletRepository;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceTempAuthorizationAuxResponseDTO;
@@ -62,13 +62,13 @@ public class InvoiceTempAuthorizationServiceImpl implements InvoiceTempAuthoriza
     public InvoiceTempAuthorizationModel saveFromDTO(InvoiceTempAuthorizationRequestDTO dto) {
         // Validate references exist
         if (dto.getEnterpriseId() != null && !enterpriseRepository.existsById(dto.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
         if (dto.getOutletId() != null && !outletRepository.existsById(dto.getOutletId())) {
-            throw new RuntimeException("Outlet does not exist");
+            throw new ResourceNotFoundException("Outlet does not exist");
         }
         if (dto.getInvoiceId() != null && !invoiceRepository.existsById(dto.getInvoiceId())) {
-            throw new RuntimeException("Invoice does not exist");
+            throw new ResourceNotFoundException("Invoice does not exist");
         }
 
         InvoiceTempAuthorizationModel model = mapper.requestDtoToModel(dto);
@@ -82,13 +82,13 @@ public class InvoiceTempAuthorizationServiceImpl implements InvoiceTempAuthoriza
 
         // Validate references exist
         if (dto.getEnterpriseId() != null && !enterpriseRepository.existsById(dto.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
         if (dto.getOutletId() != null && !outletRepository.existsById(dto.getOutletId())) {
-            throw new RuntimeException("Outlet does not exist");
+            throw new ResourceNotFoundException("Outlet does not exist");
         }
         if (dto.getInvoiceId() != null && !invoiceRepository.existsById(dto.getInvoiceId())) {
-            throw new RuntimeException("Invoice does not exist");
+            throw new ResourceNotFoundException("Invoice does not exist");
         }
 
         // Update fields
@@ -240,7 +240,7 @@ public class InvoiceTempAuthorizationServiceImpl implements InvoiceTempAuthoriza
 
             // Paso 7: Revisar si  la factura fue AUTORIZADO
             if (!sriInvoiceProcessingService.isAutorizado(autorizacionResponse)) {
-                throw new RuntimeException("La Factura no autorizada por el SRI");
+                throw new ResourceNotFoundException("La Factura no autorizada por el SRI");
             }else{
 
                 delete(findTemp.getId());

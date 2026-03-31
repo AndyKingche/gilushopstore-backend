@@ -1,5 +1,8 @@
 package com.izenshy.gessainvoice.modules.product.product.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.product.product.dto.CatalogBrandDTO;
 import com.izenshy.gessainvoice.modules.product.product.mapper.CatalogBrandMapper;
 import com.izenshy.gessainvoice.modules.product.product.model.CatalogBrand;
@@ -26,11 +29,11 @@ public class CatalogBrandServiceImpl implements CatalogBrandService {
     @Override
     public CatalogBrandDTO createCatalogBrand(CatalogBrandDTO catalogBrandDTO) {
         if (catalogBrandDTO.getBrandName() == null || catalogBrandDTO.getBrandName().isEmpty()) {
-            throw new RuntimeException("Brand name is required");
+            throw new BadRequestException("Brand name is required");
         }
 
         catalogBrandRepository.findByBrandName(catalogBrandDTO.getBrandName()).ifPresent(c -> {
-            throw new RuntimeException("Brand with name " + catalogBrandDTO.getBrandName() + " already exists");
+            throw new ResourceAlreadyExistsException("Brand with name " + catalogBrandDTO.getBrandName() + " already exists");
         });
 
         CatalogBrand catalogBrand = catalogBrandMapper.dtoToModel(catalogBrandDTO);
@@ -42,12 +45,12 @@ public class CatalogBrandServiceImpl implements CatalogBrandService {
     public CatalogBrandDTO updateCatalogBrand(Long id, CatalogBrandDTO catalogBrandDTO) {
         Optional<CatalogBrand> existing = catalogBrandRepository.findById(id);
         if (existing.isEmpty()) {
-            throw new RuntimeException("CatalogBrand not found");
+            throw new ResourceNotFoundException("CatalogBrand not found");
         }
 
         catalogBrandRepository.findByBrandName(catalogBrandDTO.getBrandName()).ifPresent(c -> {
             if (!c.getId().equals(id)) {
-                throw new RuntimeException("Brand with name " + catalogBrandDTO.getBrandName() + " already exists");
+                throw new ResourceAlreadyExistsException("Brand with name " + catalogBrandDTO.getBrandName() + " already exists");
             }
         });
 
@@ -60,7 +63,7 @@ public class CatalogBrandServiceImpl implements CatalogBrandService {
     @Override
     public void deleteCatalogBrand(Long id) {
         if (!catalogBrandRepository.existsById(id)) {
-            throw new RuntimeException("CatalogBrand not found");
+            throw new ResourceNotFoundException("CatalogBrand not found");
         }
         catalogBrandRepository.deleteById(id);
     }
@@ -69,7 +72,7 @@ public class CatalogBrandServiceImpl implements CatalogBrandService {
     public CatalogBrandDTO getCatalogBrandById(Long id) {
         Optional<CatalogBrand> catalogBrand = catalogBrandRepository.findById(id);
         if (catalogBrand.isEmpty()) {
-            throw new RuntimeException("CatalogBrand not found");
+            throw new ResourceNotFoundException("CatalogBrand not found");
         }
         return catalogBrandMapper.modelToDTO(catalogBrand.get());
     }

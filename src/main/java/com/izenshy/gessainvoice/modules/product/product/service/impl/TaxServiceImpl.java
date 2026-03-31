@@ -1,5 +1,8 @@
 package com.izenshy.gessainvoice.modules.product.product.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceAlreadyExistsException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.product.product.dto.TaxDTO;
 import com.izenshy.gessainvoice.modules.product.product.dto.TaxResponse;
 import com.izenshy.gessainvoice.modules.product.product.mapper.TaxMapper;
@@ -29,11 +32,11 @@ public class TaxServiceImpl implements TaxService {
     @Override
     public TaxDTO createTax(TaxDTO taxDTO) {
         if (taxDTO.getTaxCode() == null || taxDTO.getTaxCode().isEmpty()) {
-            throw new RuntimeException("Tax code is required");
+            throw new BadRequestException("Tax code is required");
         }
 
         taxRepository.findByTaxCode(taxDTO.getTaxCode()).ifPresent(t -> {
-            throw new RuntimeException("Tax with code " + taxDTO.getTaxCode() + " already exists");
+            throw new ResourceAlreadyExistsException("Tax with code " + taxDTO.getTaxCode() + " already exists");
         });
 
         TaxModel tax = taxMapper.dtoToModel(taxDTO);
@@ -44,11 +47,11 @@ public class TaxServiceImpl implements TaxService {
     @Override
     public TaxDTO updateTax(Long id, TaxDTO taxDTO) {
         TaxModel existing = taxRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tax not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Tax not found with id " + id));
 
         if (!existing.getTaxCode().equals(taxDTO.getTaxCode())
                 && taxRepository.findByTaxCode(taxDTO.getTaxCode()).isPresent()) {
-            throw new RuntimeException("Tax code " + taxDTO.getTaxCode() + " already exists");
+            throw new ResourceAlreadyExistsException("Tax code " + taxDTO.getTaxCode() + " already exists");
         }
 
         existing.setTaxCode(taxDTO.getTaxCode());
@@ -63,7 +66,7 @@ public class TaxServiceImpl implements TaxService {
     @Override
     public void deleteTax(Long id) {
         if (!taxRepository.existsById(id)) {
-            throw new EntityNotFoundException("Tax not found with id " + id);
+            throw new ResourceNotFoundException("Tax not found with id " + id);
         }
         taxRepository.deleteById(id);
     }
@@ -71,7 +74,7 @@ public class TaxServiceImpl implements TaxService {
     @Override
     public TaxResponse getTaxById(Long id) {
         TaxModel tax = taxRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tax not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Tax not found with id " + id));
         return taxMapper.modelToResponse(tax);
     }
 

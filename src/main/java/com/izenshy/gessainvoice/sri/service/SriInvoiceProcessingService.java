@@ -1,8 +1,9 @@
 package com.izenshy.gessainvoice.sri.service;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.common.response.GessaApiResponse;
 import com.izenshy.gessainvoice.common.response.GessaPDFResponse;
-import com.izenshy.gessainvoice.common.response.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.email.service.EmailConfigService;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
@@ -136,7 +137,7 @@ public class SriInvoiceProcessingService {
         if (claveAcceso == null) {
             // NO  fue recibida
             System.out.println("SRI Recepcion Response: " + recepcionResponse);
-            throw new RuntimeException("Invoice not received by SRI");
+            throw new BadRequestException("Invoice not received by SRI");
         }
 
         // Paso 6: Enviar al SRI AutorizacionComprobantes
@@ -149,7 +150,7 @@ public class SriInvoiceProcessingService {
 
         // Paso 7: Revisar si  la factura fue AUTORIZADO
         if (!isAutorizado(autorizacionResponse)) {
-            throw new RuntimeException("Invoice not authorized by SRI");
+            throw new BadRequestException("Invoice not authorized by SRI");
         }else{
             // Paso 8: Guardar la factura en la base de datos
             return saveInvoiceToDatabase(facturaDto, claveAcceso, secuencial);
@@ -317,7 +318,7 @@ public class SriInvoiceProcessingService {
         if (claveAcceso == null) {
             // NO  fue recibida
             System.out.println("SRI Recepcion Response: " + recepcionResponse);
-            throw new RuntimeException("La Factura no fue recibida por el  SRI");
+            throw new BadRequestException("La Factura no fue recibida por el  SRI");
         }
 
         // ========================================================================
@@ -364,7 +365,7 @@ public class SriInvoiceProcessingService {
 
         // Paso 7: Revisar si  la factura fue AUTORIZADO
         if (!isAutorizado(autorizacionResponse)) {
-            throw new RuntimeException("La Factura no autorizada por el SRI");
+            throw new BadRequestException("La Factura no autorizada por el SRI");
         }else{
             // Paso 8: Guardar la factura en la base de datos
             InvoiceModel savedInvoice = updatedInvoiceToDatabaseDeluxe(facturaDto,

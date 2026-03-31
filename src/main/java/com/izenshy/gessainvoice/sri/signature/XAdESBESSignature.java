@@ -7,6 +7,8 @@ import es.mityc.javasign.xml.refs.InternObjectToSign;
 import es.mityc.javasign.xml.refs.ObjectToSign;
 import java.io.IOException;
 
+import com.izenshy.gessainvoice.common.exception.BadRequestException;
+
 
 public class XAdESBESSignature extends GenericXMLSignature{
     private final String fileToSign;
@@ -35,7 +37,7 @@ public class XAdESBESSignature extends GenericXMLSignature{
         try {
             dataToSign.setDocument(getDocument(fileToSign));
         } catch (IOException e) {
-            throw new RuntimeException("Error leyendo el XML a firmar", e);
+            throw new BadRequestException("Error leyendo el XML a firmar: "+ e.getMessage());
         }
 
         return dataToSign;

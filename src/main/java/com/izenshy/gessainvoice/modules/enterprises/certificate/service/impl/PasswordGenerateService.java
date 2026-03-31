@@ -1,7 +1,11 @@
 package com.izenshy.gessainvoice.modules.enterprises.certificate.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -15,12 +19,16 @@ import java.util.Base64;
 public class PasswordGenerateService {
 
     private final int GCM_IV_LENGTH = 12;
+    private static final Logger logger = LoggerFactory.getLogger(PasswordGenerateService.class);
     private final int GCM_TAG_LENGTH = 16;
+
 
     @Value("${app.name.algorithm}")
     private String ALGORITHM;
     @Value("${app.name.key}")
     private String masterKey;
+
+    
 
     private SecretKeySpec deriveUserKey(Long userId) {
         try {
@@ -29,7 +37,11 @@ public class PasswordGenerateService {
             byte[] keyBytes = digest.digest(userSpecificKey.getBytes(StandardCharsets.UTF_8));
             return new SecretKeySpec(keyBytes, "AES");
         } catch (Exception e) {
-            throw new RuntimeException("Error generando clave de usuario", e);
+            //throw new RuntimeException("Error generando clave de usuario", e);
+            logger.error("Error generando clave de usuario", e);
+            //return null;
+            throw new ResourceNotFoundException("Error generando clave de usuario: "+ e.getMessage());
+
         }
     }
 
@@ -48,7 +60,11 @@ public class PasswordGenerateService {
 
             return Base64.getEncoder().encodeToString(combined);
         } catch (Exception e) {
-            throw new RuntimeException("Error al encriptar contraseña", e);
+            // throw new RuntimeException("Error al encriptar contraseña", e);
+            logger.error("Error al encriptar contraseña", e);
+            //return null;
+            throw new ResourceNotFoundException("Error al encriptar contraseña: "+e.getMessage());
+
         }
     }
 
@@ -68,7 +84,11 @@ public class PasswordGenerateService {
             byte[] decryptedData = cipher.doFinal(encryptedData);
             return new String(decryptedData, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new RuntimeException("Error al desencriptar contraseña", e);
+            //throw new RuntimeException("Error al desencriptar contraseña", e);
+            logger.error("Error al desencriptar contraseña", e);
+            //return null;
+            throw new ResourceNotFoundException("Error al desencriptar contraseña: "+e);
+
         }
     }
 }

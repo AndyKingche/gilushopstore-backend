@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.controller;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.common.response.GessaApiResponse;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceTempAuthorizationAuxResponseDTO;
 import com.izenshy.gessainvoice.modules.invoice.dto.InvoiceTempAuthorizationRequestDTO;
@@ -59,7 +60,7 @@ public class InvoiceTempAuthorizationController {
     public ResponseEntity<GessaApiResponse<InvoiceTempAuthorizationResponseDTO>> getById(@PathVariable Long id) {
         try {
             var model = service.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Invoice temp authorization not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("Invoice temp authorization not found with id: " + id));
             var responseDTO = service.toResponseDTO(model);
             return ResponseEntity.ok(GessaApiResponse.success("invoice id", responseDTO));
         } catch (Exception e) {
@@ -96,7 +97,7 @@ public class InvoiceTempAuthorizationController {
             @PathVariable UUID tempUuid) {
         try {
             var model = service.findByTempUuid(tempUuid)
-                    .orElseThrow(() -> new RuntimeException("Invoice temp authorization not found with uuid: " + tempUuid));
+                    .orElseThrow(() -> new ResourceNotFoundException("Invoice temp authorization not found with uuid: " + tempUuid));
             var responseDTO = service.toResponseDTO(model);
             return ResponseEntity.ok(GessaApiResponse.success("Uuuid", responseDTO));
         } catch (Exception e) {
@@ -164,7 +165,7 @@ public class InvoiceTempAuthorizationController {
             @PathVariable String accessCode) {
         try {
             var model = service.findByAccessCode(accessCode)
-                    .orElseThrow(() -> new RuntimeException("Invoice temp authorization not found with access code: " + accessCode));
+                    .orElseThrow(() -> new ResourceNotFoundException("Invoice temp authorization not found with access code: " + accessCode));
             var responseDTO = service.toResponseDTO(model);
             return ResponseEntity.ok(GessaApiResponse.success("Lista Completa", responseDTO));
         } catch (Exception e) {

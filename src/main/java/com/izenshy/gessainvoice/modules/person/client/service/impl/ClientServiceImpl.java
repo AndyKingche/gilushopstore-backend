@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.person.client.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.model.EnterpriseModel;
 import com.izenshy.gessainvoice.modules.enterprises.certificate.repository.EnterpriseRepository;
 import com.izenshy.gessainvoice.modules.person.client.dto.ClientRequestCreateDTO;
@@ -55,7 +56,7 @@ public class ClientServiceImpl implements ClientService {
     public ClientModel saveClientDTO(ClientRequestCreateDTO clientRequestDTO) {
         // Validate that enterprise exists
         if (clientRequestDTO.getEnterpriseId() == null || !enterpriseRepository.existsById(clientRequestDTO.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
 
         // Create enterprise reference
@@ -99,14 +100,14 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientModel getClientById(Long clientId) {
         return clientRepository.findById(clientId)
-                .orElseThrow(()-> new RuntimeException("Cliente no encontrado con Id: " + clientId));
+                .orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado con Id: " + clientId));
     }
 
     @Override
     public ClientModel updateClientDTO(Long id, ClientRequestDTO clientRequestDTO) {
         // Validate that enterprise exists
         if (clientRequestDTO.getEnterpriseId() == null || !enterpriseRepository.existsById(clientRequestDTO.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
 
         // Create enterprise reference
@@ -126,7 +127,7 @@ public class ClientServiceImpl implements ClientService {
             clientFound.setEnterpriseId(enterpriseRef);
 
             return clientRepository.save(clientFound);
-        }).orElseThrow(() -> new RuntimeException("Client not found with id " + id));
+        }).orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + id));
     }
 
     @Override
@@ -142,7 +143,7 @@ public class ClientServiceImpl implements ClientService {
             client.setClientStatus(false);
             clientRepository.save(client);
         } else {
-            throw new RuntimeException("Client not found with id " + id);
+            throw new ResourceNotFoundException("Client not found with id " + id);
         }
     }
 
@@ -150,14 +151,14 @@ public class ClientServiceImpl implements ClientService {
     public ClientResponseDTO getClientByRuc(String ruc) {
         return clientRepository.findByClientRuc(ruc)
                 .map(clientMapper::modelToResponseDTO)
-                .orElseThrow(()-> new RuntimeException("Cliente no encontrado con RUC: " + ruc));
+                .orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado con RUC: "));
     }
 
     @Override
     public ClientResponseDTO getClientByIdentificacion(String identificacion) {
         return clientRepository.findByClientIdentification(identificacion)
                 .map(clientMapper::modelToResponseDTO)
-                .orElseThrow(()-> new RuntimeException("Cliente no encontrado con CI: " + identificacion));
+                .orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado"));
     }
 
     @Override

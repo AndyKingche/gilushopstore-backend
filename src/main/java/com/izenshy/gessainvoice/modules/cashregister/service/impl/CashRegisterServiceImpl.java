@@ -1,5 +1,6 @@
 package com.izenshy.gessainvoice.modules.cashregister.service.impl;
 
+import com.izenshy.gessainvoice.common.exception.ResourceNotFoundException;
 import com.izenshy.gessainvoice.modules.cashregister.dto.CashRegisterRequestDTO;
 import com.izenshy.gessainvoice.modules.cashregister.dto.CashRegisterResponseDTO;
 import com.izenshy.gessainvoice.modules.cashregister.mapper.CashRegisterMapper;
@@ -46,13 +47,13 @@ public class CashRegisterServiceImpl implements CashRegisterService {
     public CashRegisterModel openCashRegister(CashRegisterRequestDTO requestDTO) {
         // Validate that user, outlet, and enterprise exist
         if (requestDTO.getUserId() == null || !userRepository.existsById(requestDTO.getUserId())) {
-            throw new RuntimeException("User does not exist");
+            throw new ResourceNotFoundException("User does not exist");
         }
         if (requestDTO.getOutletId() == null || !outletRepository.existsById(requestDTO.getOutletId())) {
-            throw new RuntimeException("Outlet does not exist");
+            throw new ResourceNotFoundException("Outlet does not exist");
         }
         if (requestDTO.getEnterpriseId() == null || !enterpriseRepository.existsById(requestDTO.getEnterpriseId())) {
-            throw new RuntimeException("Enterprise does not exist");
+            throw new ResourceNotFoundException("Enterprise does not exist");
         }
 
         // Check if there's already an open cash register for this outlet
@@ -62,7 +63,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
                 .collect(Collectors.toList());
 
         if (!openRegisters.isEmpty()) {
-            throw new RuntimeException("There is already an open cash register for this outlet");
+            throw new ResourceNotFoundException("There is already an open cash register for this outlet");
         }
 
         CashRegisterModel cashRegister = cashRegisterMapper.dtoToModel(requestDTO);
@@ -80,10 +81,10 @@ public class CashRegisterServiceImpl implements CashRegisterService {
     @Override
     public CashRegisterModel closeCashRegister(Long id, String closingNotes, Double closingCash, Double closingTransfer) {
         CashRegisterModel cashRegister = cashRegisterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cash register not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cash register not found"));
 
         if (!"ABIERTA".equals(cashRegister.getStatus()) && !"POR_CERRAR".equals(cashRegister.getStatus())) {
-            throw new RuntimeException("Cash register is not open");
+            throw new ResourceNotFoundException("Cash register is not open");
         }
 
         cashRegister.setClosingDate(LocalDateTime.now());
@@ -108,7 +109,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
     @Override
     public CashRegisterModel getCashRegisterById(Long id) {
         return cashRegisterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cash register not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cash register not found"));
     }
 
     @Override
@@ -117,7 +118,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 
         return cashRegisterRepository.findByCashRegisterUuid(uuid)
                 .map(cashRegisterMapper::modelToResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Cash register not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cash register not found"));
     }
 
     @Override
@@ -160,7 +161,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
     @Override
     public void deleteCashRegister(Long id) {
         if (!cashRegisterRepository.existsById(id)) {
-            throw new RuntimeException("Cash register not found");
+            throw new ResourceNotFoundException("Cash register not found");
         }
         cashRegisterRepository.deleteById(id);
     }
@@ -176,7 +177,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
         return cashRegisterRepository
                 .findOpenCashRegisterToday(outletId, enterpriseId, startDate, endDate)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "No existe una caja ABIERTA para hoy en este punto de venta"
                         )
                 );
@@ -206,7 +207,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
                 .isPresent();
 
         if (exists) {
-            throw new RuntimeException(
+            throw new ResourceNotFoundException(
                     "Ya existe una caja ABIERTA para hoy en este punto de venta"
             );
         }
