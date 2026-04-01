@@ -32,10 +32,10 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 
     @Autowired
     public CashRegisterServiceImpl(CashRegisterRepository cashRegisterRepository,
-                                   CashRegisterMapper cashRegisterMapper,
-                                   UserRepository userRepository,
-                                   OutletRepository outletRepository,
-                                   EnterpriseRepository enterpriseRepository) {
+            CashRegisterMapper cashRegisterMapper,
+            UserRepository userRepository,
+            OutletRepository outletRepository,
+            EnterpriseRepository enterpriseRepository) {
         this.cashRegisterRepository = cashRegisterRepository;
         this.cashRegisterMapper = cashRegisterMapper;
         this.userRepository = userRepository;
@@ -72,14 +72,16 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 
         // Calculate opening total
         BigDecimal openingCash = requestDTO.getOpeningCash() != null ? requestDTO.getOpeningCash() : BigDecimal.ZERO;
-        BigDecimal openingTransfer = requestDTO.getOpeningTransfer() != null ? requestDTO.getOpeningTransfer() : BigDecimal.ZERO;
+        BigDecimal openingTransfer = requestDTO.getOpeningTransfer() != null ? requestDTO.getOpeningTransfer()
+                : BigDecimal.ZERO;
         cashRegister.setOpeningTotal(openingCash.add(openingTransfer));
 
         return cashRegisterRepository.save(cashRegister);
     }
 
     @Override
-    public CashRegisterModel closeCashRegister(Long id, String closingNotes, Double closingCash, Double closingTransfer) {
+    public CashRegisterModel closeCashRegister(Long id, String closingNotes, Double closingCash,
+            Double closingTransfer) {
         CashRegisterModel cashRegister = cashRegisterRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cash register not found"));
 
@@ -95,10 +97,32 @@ public class CashRegisterServiceImpl implements CashRegisterService {
         cashRegister.setClosingTotal(cashRegister.getClosingCash().add(cashRegister.getClosingTransfer()));
 
         // Calculate differences
-        BigDecimal expectedCash = cashRegister.getOpeningCash().add(cashRegister.getTotalSalesCash()).subtract(
-                cashRegister.getTotalExpenses() != null ? cashRegister.getTotalExpenses() : BigDecimal.ZERO);
-        BigDecimal expectedTransfer = cashRegister.getOpeningTransfer().add(cashRegister.getTotalSalesTransfer()).subtract(
-                cashRegister.getTotalInvestments() != null ? cashRegister.getTotalInvestments() : BigDecimal.ZERO);
+        // BigDecimal expectedCash =
+        // cashRegister.getOpeningCash().add(cashRegister.getTotalSalesCash()).subtract(
+        // cashRegister.getTotalExpenses() != null ? cashRegister.getTotalExpenses() :
+        // BigDecimal.ZERO);
+        // BigDecimal expectedTransfer =
+        // cashRegister.getOpeningTransfer().add(cashRegister.getTotalSalesTransfer()).subtract(
+        // cashRegister.getTotalInvestments() != null ?
+        // cashRegister.getTotalInvestments() : BigDecimal.ZERO);
+
+        // cashRegister.setCashDifference(cashRegister.getClosingCash().subtract(expectedCash));
+        // cashRegister.setTransferDifference(cashRegister.getClosingTransfer().subtract(expectedTransfer));
+
+        // return cashRegisterRepository.save(cashRegister);
+        // Calculate differences
+        BigDecimal totalExpenses = cashRegister.getTotalExpenses() != null ? cashRegister.getTotalExpenses()
+                : BigDecimal.ZERO;
+        BigDecimal totalInvestments = cashRegister.getTotalInvestments() != null ? cashRegister.getTotalInvestments()
+                : BigDecimal.ZERO;
+
+        BigDecimal expectedCash = cashRegister.getOpeningCash()
+                .add(cashRegister.getTotalSalesCash())
+                .add(totalInvestments)
+                .subtract(totalExpenses);
+
+        BigDecimal expectedTransfer = cashRegister.getOpeningTransfer()
+                .add(cashRegister.getTotalSalesTransfer());
 
         cashRegister.setCashDifference(cashRegister.getClosingCash().subtract(expectedCash));
         cashRegister.setTransferDifference(cashRegister.getClosingTransfer().subtract(expectedTransfer));
@@ -114,7 +138,6 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 
     @Override
     public CashRegisterResponseDTO getCashRegisterByUuid(UUID uuid) {
-
 
         return cashRegisterRepository.findByCashRegisterUuid(uuid)
                 .map(cashRegisterMapper::modelToResponseDTO)
@@ -176,11 +199,8 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 
         return cashRegisterRepository
                 .findOpenCashRegisterToday(outletId, enterpriseId, startDate, endDate)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "No existe una caja ABIERTA para hoy en este punto de venta"
-                        )
-                );
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe una caja ABIERTA para hoy en este punto de venta"));
     }
 
     @Override
@@ -208,8 +228,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 
         if (exists) {
             throw new ResourceNotFoundException(
-                    "Ya existe una caja ABIERTA para hoy en este punto de venta"
-            );
+                    "Ya existe una caja ABIERTA para hoy en este punto de venta");
         }
     }
 }
