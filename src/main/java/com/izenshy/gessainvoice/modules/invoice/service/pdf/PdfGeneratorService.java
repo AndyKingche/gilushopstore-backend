@@ -1193,261 +1193,261 @@ public class PdfGeneratorService {
 
     String styles = """
                           @page {
-                size: auto;
-        margin: 10mm;
-              }
+                          size: 76mm auto;
+                          margin: 2mm 2mm 2mm 4mm;
+                          }
 
-                  body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    font-size: 12px;
-                    padding: 0;
-                  }
+                          body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            font-size: 12px;
+                            padding: 0;
+                          }
 
-                  .header {
-                    width: 100%;
-                    display: block;
-                    align-items: center;
-                    font-size: 12px;
-                  }
+                          .header {
+                            width: 100%;
+                            display: block;
+                            align-items: center;
+                            font-size: 12px;
+                          }
 
-                  .valor-square-info {
-                    overflow: hidden;
-                  }
+                          .valor-square-info {
+                            overflow: hidden;
+                          }
 
-                  .valor-square-info div:first-child {
-                    float: left;
-                  }
+                          .valor-square-info div:first-child {
+                            float: left;
+                          }
 
-                  .valor-square-info div:last-child {
-                    float: right;
-                  }
+                          .valor-square-info div:last-child {
+                            float: right;
+                          }
 
-                  .ahorro-square-info {
-                    overflow: hidden;
-                    margin-top: 3px;
-                  }
+                          .ahorro-square-info {
+                            overflow: hidden;
+                            margin-top: 3px;
+                          }
 
-                  .ahorro-square-info div:first-child {
-                    float: left;
-                    width: 70%;
-                  }
+                          .ahorro-square-info div:first-child {
+                            float: left;
+                            width: 70%;
+                          }
 
-                  .ahorro-square-info div:last-child {
-                    float: right;
-                    width: 30%;
-                    text-align: right;
-                  }
+                          .ahorro-square-info div:last-child {
+                            float: right;
+                            width: 30%;
+                            text-align: right;
+                          }
 
-                  th,
-                  td {
-                    padding: 3px;
-                    text-align: left;
-                    font-size: 10px;
-                  }
+                          th,
+                          td {
+                            padding: 3px;
+                            text-align: left;
+                            font-size: 10px;
+                          }
 
-                  th {
-                    font-weight: 700;
-                    font-size: 12px;
-                  }
+                          th {
+                            font-weight: 700;
+                            font-size: 12px;
+                          }
 
-                  .right-align {
-                    text-align: right;
-                  }
+                          .right-align {
+                            text-align: right;
+                          }
 
-                  .center-align {
-                    text-align: center;
-                  }
+                          .center-align {
+                            text-align: center;
+                          }
 
-                  .left-align {
-                    text-align: left;
-                  }
+                          .left-align {
+                            text-align: left;
+                          }
 
-                  .totals {
-                    width: 40%;
-                    float: left;
-                  }
+                          .totals {
+                            width: 40%;
+                            float: left;
+                          }
 
-                  .totals table td {
-                    border-collapse: collapse;
-                  }
+                          .totals table td {
+                            border-collapse: collapse;
+                          }
 
-                  .bold {
-                    font-weight: 700;
-                  }
+                          .bold {
+                            font-weight: 700;
+                          }
 
-                  .center {
-                    text-align: center;
-                  }
+                          .center {
+                            text-align: center;
+                          }
 
-                  .small-note {
-                    font-size: 8px;
-                    color: #555;
-                    margin-top: 10px;
-                  }
+                          .small-note {
+                            font-size: 8px;
+                            color: #555;
+                            margin-top: 10px;
+                          }
 
-                  .access-key-info {
-                    text-align: center;
-                  }
+                          .access-key-info {
+                            text-align: center;
+                          }
 
-                  .access-key {
-                    width: 30%;
-                    display: inline-block;
-                  }
+                          .access-key {
+                            width: 30%;
+                            display: inline-block;
+                          }
 
-                  .info-factura {
-                    overflow: hidden;
-                  }
+                          .info-factura {
+                            overflow: hidden;
+                          }
 
-                  .info-factura-no {
-                    float: left;
-                    margin-right: 1rem;
-                    font-size: 15px;
-                  }
+                          .info-factura-no {
+                            float: left;
+                            margin-right: 1rem;
+                            font-size: 15px;
+                          }
 
-                  .info-factura-numero {
-                    font-size: 15px;
-                    float: left;
-                  }
+                          .info-factura-numero {
+                            font-size: 15px;
+                            float: left;
+                          }
 
-                  .ruc-info {
-                    overflow: hidden;
-                    font-weight: 700;
-                    font-size: 15px;
-                  }
+                          .ruc-info {
+                            overflow: hidden;
+                            font-weight: 700;
+                            font-size: 15px;
+                          }
 
-                  .ruc {
-                    float: left;
-                    margin-right: 2rem;
-                  }
+                          .ruc {
+                            float: left;
+                            margin-right: 2rem;
+                          }
 
-                  .factura-info {
-                    font-weight: 700;
-                    font-size: 14px;
-                  }
+                          .factura-info {
+                            font-weight: 700;
+                            font-size: 14px;
+                          }
 
-                  .fecha-info {
-                    overflow: hidden;
-                  }
+                          .fecha-info {
+                            overflow: hidden;
+                          }
 
-                  .fecha {
-                    float: left;
-                    margin-right: 1rem;
-                  }
+                          .fecha {
+                            float: left;
+                            margin-right: 1rem;
+                          }
 
-                  .ambiente-info {
-                    overflow: hidden;
-                  }
+                          .ambiente-info {
+                            overflow: hidden;
+                          }
 
-                  .ambiente {
-                    float: left;
-                    margin-right: 1rem;
-                  }
+                          .ambiente {
+                            float: left;
+                            margin-right: 1rem;
+                          }
 
-                  .emision-info {
-                    overflow: hidden;
-                  }
+                          .emision-info {
+                            overflow: hidden;
+                          }
 
-                  .emision {
-                    float: left;
-                    margin-right: 1rem;
-                  }
+                          .emision {
+                            float: left;
+                            margin-right: 1rem;
+                          }
 
-                  .direccion-matriz-info {
-                    overflow: hidden;
-                    font-size: 15px;
-                  }
+                          .direccion-matriz-info {
+                            overflow: hidden;
+                            font-size: 15px;
+                          }
 
-                  .direccion-matriz {
-                    float: left;
-                    margin-right: 1rem;
-                  }
+                          .direccion-matriz {
+                            float: left;
+                            margin-right: 1rem;
+                          }
 
-                  .direccion-sucursal-info {
-                    overflow: hidden;
-                    font-size: 10px;
-                  }
+                          .direccion-sucursal-info {
+                            overflow: hidden;
+                            font-size: 10px;
+                          }
 
-                  .direccion-sucursal {
-                    float: left;
-                    margin-right: 1rem;
-                  }
+                          .direccion-sucursal {
+                            float: left;
+                            margin-right: 1rem;
+                          }
 
-                  .fin-info {
-                    font-size: 10px;
-                    margin-top: 2%;
-                  }
+                          .fin-info {
+                            font-size: 10px;
+                            margin-top: 2%;
+                          }
 
-                  .nombres-info {
-                    overflow: hidden;
-                    font-size: 15px;
-                  }
+                          .nombres-info {
+                            overflow: hidden;
+                            font-size: 15px;
+                          }
 
-                  .nombres {
-                    float: left;
-                    margin-right: 3rem;
-                    font-weight: bold;
-                  }
+                          .nombres {
+                            float: left;
+                            margin-right: 3rem;
+                            font-weight: bold;
+                          }
 
-                  .identificacion-info {
-                    overflow: hidden;
-                    font-size: 15px;
-                  }
+                          .identificacion-info {
+                            overflow: hidden;
+                            font-size: 15px;
+                          }
 
-                  .identificacion {
-                    float: left;
-                    margin-right: 2rem;
-                  }
+                          .identificacion {
+                            float: left;
+                            margin-right: 2rem;
+                          }
 
-                  .fecha-nombres-info {
-                    overflow: hidden;
-                    font-size: 15px;
-                  }
+                          .fecha-nombres-info {
+                            overflow: hidden;
+                            font-size: 15px;
+                          }
 
-                  .fecha-nombres {
-                    float: left;
-                    margin-right: 2rem;
-                  }
+                          .fecha-nombres {
+                            float: left;
+                            margin-right: 2rem;
+                          }
 
-                  .direccion-nombres-info {
-                    overflow: hidden;
-                    font-size: 15px;
-                  }
+                          .direccion-nombres-info {
+                            overflow: hidden;
+                            font-size: 15px;
+                          }
 
-                  .direccion-nombres {
-                    float: left;
-                    margin-right: 2rem;
-                  }
+                          .direccion-nombres {
+                            float: left;
+                            margin-right: 2rem;
+                          }
 
-                  .resumen-factura {
-                    width: 100%;
-                    overflow: hidden;
-                  }
+                          .resumen-factura {
+                            width: 100%;
+                            overflow: hidden;
+                          }
 
-                  .forma-pago {
-                    margin-top: 3%;
-                    width: 58%;
-                    float: left;
-                  }
+                          .forma-pago {
+                            margin-top: 3%;
+                            width: 58%;
+                            float: left;
+                          }
 
-                  .clear {
-                    clear: both;
-                  }
+                          .clear {
+                            clear: both;
+                          }
 
-                  .numero-autorizacion {
-                    font-size: 10px;
-                  }
+                          .numero-autorizacion {
+                            font-size: 15px;
+                          }
 
-                  .invoice {
-                    margin: 0;
-                    padding: 0;
-                    width: 100%
-                  }
+                          .invoice {
+                            margin: 0;
+                            padding: 0;
+                            width: 100%
+                          }
 
-                  .nombreempresa{
-                    font-size: 18px;
-                  }
-                          """;
+                          .nombreempresa{
+                            font-size: 18px;
+                          }
+                                  """;
     StringBuilder html = new StringBuilder();
     html.append(
         "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
@@ -1634,10 +1634,10 @@ public class PdfGeneratorService {
 
     // Get enterprise info
     String styles = """
-                          @page {
-                size: auto;
-        margin: 10mm;
-              }
+                  @page {
+                  size: 76mm auto;
+                  margin: 2mm 2mm 2mm 4mm;
+                  }
 
                   body {
                     font-family: Arial, sans-serif;
@@ -1877,7 +1877,7 @@ public class PdfGeneratorService {
                   }
 
                   .numero-autorizacion {
-                    font-size: 10px;
+                    font-size: 15px;
                   }
 
                   .invoice {
@@ -2085,10 +2085,10 @@ public class PdfGeneratorService {
     // clientService.getClientById(invoice.getClientId().getId());
 
     String styles = """
-                          @page {
-                size: auto;
-        margin: 10mm;
-              }
+                  @page {
+                  size: 76mm auto;
+                  margin: 2mm 2mm 2mm 4mm;
+                  }
 
                   body {
                     font-family: Arial, sans-serif;
@@ -2328,7 +2328,7 @@ public class PdfGeneratorService {
                   }
 
                   .numero-autorizacion {
-                    font-size: 10px;
+                    font-size: 15px;
                   }
 
                   .invoice {
@@ -2476,10 +2476,10 @@ public class PdfGeneratorService {
   public String re_generateTicketComprobanteHtml(InvoiceHeaderDTO invoice) throws Exception {
 
     String styles = """
-                        @page {
-                size: auto;
-        margin: 10mm;
-              }
+                  @page {
+                    size: 76mm auto;
+                    margin: 2mm 2mm 2mm 4mm;
+                    }
 
                   body {
                     font-family: Arial, sans-serif;
@@ -2719,7 +2719,7 @@ public class PdfGeneratorService {
                   }
 
                   .numero-autorizacion {
-                    font-size: 10px;
+                    font-size: 15px;
                   }
 
                   .invoice {
